@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:layout_margin="20dp"
+        app:cardElevation="8dp"
+        app:cardCornerRadius="13dp"
+        android:layout_centerHorizontal="true">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="16dp">
+
+            <TextView
+                android:id="@+id/tv_healthcare_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Nama Pelayanan Kesehatan"
+                android:textSize="18sp"
+                android:textColor="@color/black"
+                android:fontFamily="@font/inter_bold"
+                android:layout_marginBottom="10dp"/>
+
+            <TextView
+                android:id="@+id/tv_healthcare_address"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/inter_regular"
+                android:textColor="@color/black"
+                android:text="Jalan RS. Fatmawati Raya, Pondok Labu, Cilandak, Kota Jakarta Selatan, Jakarta"
+                android:layout_below="@id/tv_healthcare_name"
+                android:layout_toStartOf="@+id/iv_marker"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentBottom="true"
+                android:layout_marginEnd="8dp"
+                android:maxLines="3"
+                android:ellipsize="end"/>
+
+            <ImageView
+                android:id="@+id/iv_marker"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_mark_map"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentEnd="true"/>
+
+        </RelativeLayout>
+        
+    </androidx.cardview.widget.CardView>
+
+</RelativeLayout>

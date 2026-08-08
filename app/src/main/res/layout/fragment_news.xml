@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/white"
+    tools:context=".ui.news.NewsFragment">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/headNews"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="25dp"
+                app:cardCornerRadius="13dp"
+                app:cardElevation="15dp">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <ImageView
+                        android:id="@+id/headNewsImg"
+                        android:layout_width="match_parent"
+                        android:layout_height="130dp"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/img_2"
+                        android:background="@drawable/custom_corner_rounded"/>
+
+                    <RelativeLayout
+                        android:id="@+id/headNewsBottom"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/headNewsImg"
+                        android:padding="12dp"
+                        android:background="@color/white">
+
+                        <!-- Add your title content here, e.g., TextView -->
+                        <TextView
+                            android:id="@+id/headNewsTitle"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="5 Olahraga untuk Lansia yang Efektif Jaga Kebugaran Tubuh"
+                            android:textColor="@color/black"
+                            android:textSize="18sp"
+                            android:fontFamily="@font/inter_bold" />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@id/headNewsTitle"
+                            android:orientation="horizontal"
+                            android:gravity="center_vertical">
+
+                            <TextView
+                                android:id="@+id/headNewsCat"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Tipe Kesehatan"
+                                android:fontFamily="@font/inter_medium"
+                                android:textColor="@color/black"/>
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text=" • "
+                                android:textSize="18sp"
+                                android:textColor="@color/black"
+                                android:layout_below="@id/headNewsTitle"
+                                android:layout_toRightOf="@id/headNewsCat"/>
+
+                            <TextView
+                                android:id="@+id/headNewsDate"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="1 hari yang lalu"
+                                android:fontFamily="@font/inter_medium"
+                                android:textColor="@color/black"/>
+
+                        </LinearLayout>
+                    </RelativeLayout>
+                </RelativeLayout>
+
+            </androidx.cardview.widget.CardView>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_news_list"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/headNews"
+                tools:listitem="@layout/item_news"/>
+
+        </RelativeLayout>
+    </ScrollView>
+
+
+</RelativeLayout>

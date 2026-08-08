@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/layout_bottom_gray"
+    android:orientation="vertical"
+    tools:context=".ui.reminder.ReminderActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_back_reminder"
+            style="@style/BlueRoundButtonNoOutline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/back"
+            android:textSize="16sp"
+            android:layout_marginStart="14dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="3dp"/>
+    </LinearLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/reminder"
+                android:textStyle="bold"
+                android:textSize="26sp"
+                android:textAlignment="center"
+                android:textColor="@color/black"
+                android:layout_marginVertical="12dp"/>
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardElevation="10dp"
+                android:elevation="32dp"
+                app:cardCornerRadius="20dp"
+                android:layout_margin="20dp">
+                
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingHorizontal="25dp"
+                    android:paddingVertical="18dp">
+
+                    <TextView
+                        android:id="@+id/tvOngoingReminder"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:maxLines="2"
+                        android:text="@string/reminder_ongoing"
+                        android:textColor="@color/black"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        app:layout_constrainedWidth="true"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <ImageView
+                        android:id="@+id/img_reminder"
+                        android:layout_width="70dp"
+                        android:layout_height="70dp"
+                        android:layout_marginTop="10dp"
+                        app:layout_constraintTop_toBottomOf="@id/tvOngoingReminder"
+                        app:layout_constraintStart_toStartOf="parent"
+                        tools:ignore="ContentDescription"
+                        android:src="@drawable/ic_remind_pumpkin"/>
+
+                    <TextView
+                        android:id="@+id/tv_reminder_name"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="22sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/black"
+                        android:layout_marginStart="20dp"
+                        android:layout_marginTop="6dp"
+                        app:layout_constraintHorizontal_bias="0"
+                        app:layout_constrainedWidth="true"
+                        app:layout_constraintTop_toBottomOf="@id/tvOngoingReminder"
+                        app:layout_constraintStart_toEndOf="@id/img_reminder"
+                        app:layout_constraintEnd_toEndOf="parent"/>
+
+                    <TextView
+                        android:id="@+id/tv_reminder_date"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="18sp"
+                        android:textColor="@color/black"
+                        android:layout_marginStart="20dp"
+                        android:layout_marginTop="5dp"
+                        app:layout_constraintHorizontal_bias="0"
+                        app:layout_constrainedWidth="true"
+                        app:layout_constraintTop_toBottomOf="@id/tv_reminder_name"
+                        app:layout_constraintStart_toEndOf="@id/img_reminder"
+                        app:layout_constraintEnd_toEndOf="parent"/>
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+                
+            </androidx.cardview.widget.CardView>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_add_reminder"
+                style="@style/CustomBlueRoundButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/add_reminder"
+                android:textSize="18sp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="16dp"
+                app:layout_constraintTop_toBottomOf="@id/tv_reminder_date"
+                app:layout_constraintStart_toEndOf="@id/img_reminder"/>
+
+            <Spinner
+                android:id="@+id/dropdown_reminder_filter"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingHorizontal="12dp"
+                android:paddingVertical="14dp"
+                android:elevation="14dp"
+                app:elevation="14dp"
+                android:spinnerMode="dropdown"
+                android:background="@drawable/rounded_shadow"
+                android:entries="@array/gender_array" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:translationY="-25dp"
+                android:background="#E0E5E9"
+                android:paddingTop="35dp">
+
+                <TextView
+                    android:id="@+id/tv_no_data"
+                    android:layout_width="match_parent"
+                    android:layout_height="250dp"
+                    android:text="Tidak ada hasil yang ditemukan untuk filter yang dipilih."
+                    android:gravity="center"
+                    android:paddingHorizontal="63dp"
+                    android:textSize="22sp"
+                    android:fontFamily="@font/inter_medium"
+                    android:visibility="visible"/>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rv_filtered_reminder"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    tools:listitem="@layout/item_filtered_reminder"/>
+
+            </RelativeLayout>
+
+        </LinearLayout>
+
+    </ScrollView>
+
+</LinearLayout>

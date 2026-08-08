@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.news.NewsContentActivity">
+
+    <ImageView
+        android:id="@+id/newsContentImg"
+        android:layout_width="match_parent"
+        android:layout_height="255dp"
+        android:src="@drawable/img_1"
+        android:scaleType="fitXY"
+        tools:ignore="ContentDescription" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_back_news"
+        style="@style/WhiteRoundButtonNoOutline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/back"
+        android:fontFamily="@font/inter_bold"
+        android:textSize="16sp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="14dp"
+        android:layout_marginTop="5dp"/>
+
+<!--    <com.google.android.material.button.MaterialButton-->
+<!--        android:id="@+id/btn_audio_news"-->
+<!--        style="@style/WhiteRoundButtonNoOutline"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_alignBottom="@id/newsContentImg"-->
+<!--        android:layout_alignParentEnd="true"-->
+<!--        android:layout_marginStart="16dp"-->
+<!--        android:layout_marginTop="16dp"-->
+<!--        android:layout_marginEnd="13dp"-->
+<!--        android:layout_marginBottom="24dp"-->
+<!--        android:fontFamily="@font/inter_semibold"-->
+<!--        android:text="@string/dengarkan"-->
+<!--        android:textSize="16sp"-->
+<!--        app:icon="@drawable/ic_audio"-->
+<!--        app:iconPadding="5dp"-->
+<!--        app:iconTint="@null"-->
+<!--        app:iconTintMode="src_in" />-->
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="240dp"
+        android:orientation="vertical"
+        android:background="@drawable/top_rounded">
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="20dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingHorizontal="20dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tvCtnNewsTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="24sp"
+                    android:textStyle="bold"
+                    android:layout_marginTop="5dp"
+                    android:text="Kiat-kiat Menjalani Kegiatan Setelah Pensiun"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginVertical="12dp"
+                    android:gravity="center_vertical"
+                    tools:ignore="UseCompoundDrawables">
+
+                    <ImageView
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_marginEnd="10dp"
+                        android:src="@drawable/ic_light_on"
+                        tools:ignore="ContentDescription" />
+
+                    <TextView
+                        android:id="@+id/tvCtnNewsCate"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingTop="4dp"
+                        android:text="Tips Kesehatan"
+                        android:textSize="16sp"/>
+
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/tvCtnNewsDate"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Kamis, 25 April 2024 07:00 WIB"
+                    android:textSize="14sp"/>
+
+                <TextView
+                    android:id="@+id/tv_ctn_source"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="14sp"
+                    android:text="Sumber"
+                    android:fontFamily="@font/inter_medium"
+                    android:textColor="@color/blue2"
+                    android:layout_marginTop="10dp"/>
+
+                <TextView
+                    android:id="@+id/tvNewsContent"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="18dp"
+                    android:textSize="20sp"
+                    android:text="@string/news_content"/>
+
+            </LinearLayout>
+
+        </ScrollView>
+
+    </LinearLayout>
+
+
+</RelativeLayout>

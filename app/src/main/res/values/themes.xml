@@ -1,0 +1,26 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Base.Theme.AplikasiLansia" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Customize your light theme here. -->
+        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:fontFamily">@font/inter_regular</item>
+        <item name="colorSecondary">@color/white</item>
+        <item name="android:statusBarColor" tools:targetApi="30">@android:color/transparent</item>
+        <item name="android:windowBackground" tools:targetApi="30">?attr/colorSecondary</item>
+
+    </style>
+
+    <style name="Theme.AplikasiLansia" parent="Base.Theme.AplikasiLansia">
+        <item name="android:fontFamily">@font/inter_regular</item>
+        <item name="bottomNavigationStyle">@style/Widget.App.BottomNavigationView</item>
+    </style>
+    <style name="Widget.App.BottomNavigationView" parent="Widget.Material3.BottomNavigationView">
+        <item name="materialThemeOverlay">@style/ThemeOverlay.App.BottomNavigationView</item>
+    </style>
+
+    <style name="ThemeOverlay.App.BottomNavigationView" parent="">
+        <item name="colorSurface">@color/shrine_theme_light_surface</item>
+        <item name="colorOnSurfaceVariant">@color/shrine_theme_light_onSurfaceVariant</item>
+    </style>
+</resources>

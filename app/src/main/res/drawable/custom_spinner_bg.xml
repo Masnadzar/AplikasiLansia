@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Your custom background with only a stroke -->
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="@android:color/white" />
+            <stroke
+                android:width="2dp"
+                android:color="@color/blue1"/>
+            <corners android:radius="13dp"/>
+        </shape>
+    </item>
+    <!-- Default spinner arrow icon -->
+    <item android:right="16dp">
+        <bitmap
+            android:tint="@color/black"
+            android:gravity="end|center_vertical"
+            android:src="@android:drawable/arrow_down_float" />
+    </item>
+</layer-list>

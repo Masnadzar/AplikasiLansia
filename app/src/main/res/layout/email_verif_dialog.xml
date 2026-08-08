@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_horizontal"
+    android:padding="18dp"
+    android:background="@drawable/rounded_shadow"
+    android:layout_gravity="center"
+    android:orientation="vertical">
+
+    <ImageView
+        android:id="@+id/img_verif_sent"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:src="@drawable/ic_checkmark"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="4dp"/>
+
+    <TextView
+        android:id="@+id/text_verif_sent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Verifikasi email telah dikirim ke"
+        android:textAlignment="center"
+        android:textSize="20sp"
+        android:fontFamily="@font/inter_semibold"
+        android:paddingHorizontal="15dp"/>
+
+    <TextView
+        android:id="@+id/tv_email_verif"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAlignment="center"
+        android:textSize="20sp"
+        android:fontFamily="@font/inter_semibold"
+        android:paddingHorizontal="15dp"/>
+
+    <TextView
+        android:id="@+id/text_verif_sent_2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Silahkan verifikasi email untuk mengaktifkan akun"
+        android:textAlignment="center"
+        android:textSize="20sp"
+        android:fontFamily="@font/inter_medium"
+        android:paddingHorizontal="15dp"
+        android:layout_marginBottom="5dp"/>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_close_verif"
+        style="@style/BlueRoundButtonNoOutline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/masuk"
+        android:textSize="18sp"
+        android:layout_marginTop="20dp"
+        android:paddingVertical="8dp"
+        android:paddingHorizontal="20dp"/>
+
+</LinearLayout>

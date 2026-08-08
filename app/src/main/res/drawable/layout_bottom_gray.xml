@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Gray bottom section -->
+    <item
+        android:drawable="@color/light_gray" />
+    <!-- Background color -->
+    <item
+        android:bottom="200dp"
+        android:drawable="@color/white" />
+</layer-list>

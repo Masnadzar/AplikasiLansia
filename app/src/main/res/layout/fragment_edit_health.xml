@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".ui.editprofile.EditHealthFragment">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="18dp"
+        android:paddingTop="5dp"
+        android:paddingBottom="18dp"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/riwayatPenyakit"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="10dp" />
+
+        <LinearLayout
+            android:id="@+id/edit_input_medhistory"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"/>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_medhistory_dialog"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="20dp"
+            android:backgroundTint="@color/blue1"
+            android:fontFamily="@font/inter_bold"
+            android:text="@string/tambah_penyakit"
+            android:textSize="18sp"
+            app:cornerRadius="13dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/care_giver"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="10dp" />
+
+        <RelativeLayout
+            android:id="@+id/perawat_input"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginBottom="20dp"
+            android:background="@drawable/custom_edit_text">
+
+            <ImageView
+                android:id="@+id/spinner_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/custom_ic_crgiver"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:padding="0dp"/>
+
+            <Spinner
+                android:id="@+id/edit_care_giver"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="3dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="20dp"
+                android:layout_toEndOf="@id/spinner_icon"
+                android:minHeight="48dp"
+                android:spinnerMode="dropdown"
+                tools:ignore="TouchTargetSizeCheck"
+                android:entries="@array/care_giver"/>
+        </RelativeLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/status_kawin"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="10dp" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginBottom="20dp"
+            android:background="@drawable/custom_edit_text">
+
+            <ImageView
+                android:id="@+id/img_icon_marriage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/custom_ic_mstatus"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:padding="0dp"/>
+
+            <Spinner
+                android:id="@+id/edit_marital"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="3dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="20dp"
+                android:layout_toEndOf="@id/img_icon_marriage"
+                android:minHeight="48dp"
+                android:spinnerMode="dropdown"
+                tools:ignore="TouchTargetSizeCheck"
+                android:entries="@array/marital_status"/>
+        </RelativeLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="20dp"
+            android:layout_marginTop="40dp">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_health_cancel"
+                style="@style/CustomWhiteRoundButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="8dp"
+                android:paddingHorizontal="28dp"
+                android:text="@string/cancel"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/btn_save_health"
+                app:layout_constraintHorizontal_weight="1"/>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_save_health"
+                style="@style/CustomBlueRoundButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="16dp"
+                android:paddingHorizontal="28dp"
+                android:text="@string/save"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toEndOf="@+id/btn_health_cancel"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_weight="1"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </LinearLayout>
+
+</ScrollView>

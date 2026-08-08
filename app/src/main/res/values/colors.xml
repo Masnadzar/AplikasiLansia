@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="grey">#808080</color>
+    <color name="blue1">#0B60B0</color>
+    <color name="blue2">#2E4DE6</color>
+    <color name="orange">#F96900</color>
+    <color name="light_orange">#DCE2C8</color>
+    <color name="light_grey">#E0E5E9</color>">
+    <color name="level0">#0B60B0</color>
+    <color name="level1">#FFCC00</color>
+    <color name="level2">#FF7F00</color>
+    <color name="level3">#CC2936</color>
+
+    <color name="shrine_theme_light_surface">#FFFFFFFF</color>
+    <color name="shrine_theme_light_onSurfaceVariant">#ADD9F4</color>"
+
+    <!-- Screens background color-->
+    <color name="bg_screen1">#f64c73</color>
+    <color name="bg_screen2">#20d2bb</color>
+    <color name="bg_screen3">#3395ff</color>
+    <color name="bg_screen4">#c873f4</color>
+    <!-- dots inactive colors -->
+    <color name="dot_dark_screen1">#2278d4</color>
+    <color name="dot_dark_screen2">#2278d4</color>
+    <color name="dot_dark_screen3">#2278d4</color>
+    <color name="dot_dark_screen4">#2278d4</color>
+    <!-- dots active colors -->
+    <color name="dot_light_screen1">#93c6fd</color>
+    <color name="dot_light_screen2">#93c6fd</color>
+    <color name="dot_light_screen3">#93c6fd</color>
+    <color name="dot_light_screen4">#93c6fd</color>
+    <color name="light_gray">#E0E5E9</color>
+    <array name="array_dot_active">
+        <item>@color/dot_light_screen1</item>
+        <item>@color/dot_light_screen2</item>
+        <item>@color/dot_light_screen3</item>
+        <item>@color/dot_light_screen4</item>
+    </array>
+    <array name="array_dot_inactive">
+        <item>@color/dot_dark_screen1</item>
+        <item>@color/dot_dark_screen2</item>
+        <item>@color/dot_dark_screen3</item>
+        <item>@color/dot_dark_screen4</item>
+    </array>
+</resources>

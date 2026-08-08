@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/blue1"
+    tools:context=".RegisterStep3Activity">
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginVertical="25dp"
+        app:cardCornerRadius="25dp">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingHorizontal="18dp"
+            android:paddingVertical="14dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="15dp"
+                android:paddingHorizontal="20dp"
+                android:text="@string/lengkapi_data"
+                android:textAlignment="center"
+                android:textSize="26sp"
+                android:textStyle="bold"
+                android:id="@+id/textView_lengkapi_data"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="20dp"
+                android:layout_marginBottom="30dp"
+                android:paddingHorizontal="5dp"
+                android:text="@string/lengkapi_data_3"
+                android:textAlignment="center"
+                android:textSize="20sp"
+                android:id="@+id/textView_lengkapi_data_3"
+                android:layout_below="@id/textView_lengkapi_data"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:text="@string/care_giver"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:id="@+id/textView_care_giver"
+                android:layout_below="@id/textView_lengkapi_data_3"/>
+
+            <RelativeLayout
+                android:id="@+id/perawat_input"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_marginBottom="20dp"
+                android:background="@drawable/custom_edit_text"
+                android:layout_below="@id/textView_care_giver">
+
+                <ImageView
+                    android:id="@+id/spinner_icon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/custom_ic_crgiver"
+                    android:layout_alignParentStart="true"
+                    android:layout_centerVertical="true"
+                    android:padding="0dp"/>
+
+                <Spinner
+                    android:id="@+id/spinner_care_giver"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginStart="3dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginBottom="20dp"
+                    android:layout_toEndOf="@id/spinner_icon"
+                    android:minHeight="48dp"
+                    android:spinnerMode="dropdown"
+                    tools:ignore="TouchTargetSizeCheck"
+                    android:entries="@array/care_giver"/>
+            </RelativeLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:text="@string/status_kawin"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:id="@+id/textView_status_kawin"
+                android:layout_below="@id/perawat_input"/>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_marginBottom="20dp"
+                android:background="@drawable/custom_edit_text"
+                android:layout_below="@id/textView_status_kawin">
+
+                <ImageView
+                    android:id="@+id/img_icon_marriage"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/custom_ic_mstatus"
+                    android:layout_alignParentStart="true"
+                    android:layout_centerVertical="true"
+                    android:padding="0dp"/>
+
+                <Spinner
+                    android:id="@+id/spinner_marital"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginStart="3dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginBottom="20dp"
+                    android:layout_toEndOf="@id/img_icon_marriage"
+                    android:minHeight="48dp"
+                    android:spinnerMode="dropdown"
+                    tools:ignore="TouchTargetSizeCheck"
+                    android:entries="@array/marital_status"/>
+            </RelativeLayout>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_save_med"
+                style="@style/CustomBlueRoundButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/simpan_riwayat_penyakit"
+                android:textSize="18sp"
+                android:layout_marginBottom="5dp"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"/>
+        </RelativeLayout>
+    </androidx.cardview.widget.CardView>
+</LinearLayout>

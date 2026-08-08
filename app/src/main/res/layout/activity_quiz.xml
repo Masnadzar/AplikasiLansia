@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/activity_quiz"
+    tools:context=".ui.quiz.QuizActivity">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_back_quiz"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Kembali"
+        android:textSize="18sp"
+        android:layout_alignParentLeft="true"
+        android:layout_marginTop="9dp"
+        style="@style/CustomBlueRoundButton"
+        android:layout_marginStart="21dp"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerView_quiz"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="24dp"
+        android:layout_below="@id/btn_back_quiz"
+        android:layout_marginTop="24dp"/>
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/cv_question"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/recyclerView_quiz"
+        android:layout_marginVertical="16dp"
+        android:layout_marginHorizontal="36dp"
+        android:padding="32dp"
+        android:backgroundTint="@color/white"
+        app:cardElevation="16dp">
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="32dp"
+            android:layout_gravity="center_horizontal">
+            <TextView
+                android:id="@+id/questionText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Question Text"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="32dp"
+                android:textSize="18sp"
+                android:layout_marginBottom="24dp"/>
+
+            <LinearLayout
+                android:id="@+id/buttonLayout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_below="@id/questionText"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="16dp"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/buttonYes"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="YA"
+                    android:textSize="20sp"
+                    style="@style/CustomWhiteRoundButton"
+                    android:layout_marginEnd="16dp"/>
+
+                <Button
+                    android:id="@+id/buttonNo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="20sp"
+                    style="@style/CustomWhiteRoundButton"
+                    android:text="TIDAK"/>
+            </LinearLayout>
+
+
+        </RelativeLayout>
+
+    </com.google.android.material.card.MaterialCardView>
+
+    <LinearLayout
+        android:id="@+id/navigationLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/cv_question"
+        android:layout_marginTop="16dp"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/buttonPrevious"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Sebelumnya"
+            android:layout_marginEnd="16dp"
+            android:textSize="18sp"
+            style="@style/CustomWhiteRoundButton"/>
+
+        <Button
+            android:id="@+id/buttonNext"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Selanjutnya"
+            android:textSize="18sp"
+            style="@style/CustomBlueRoundButton"/>
+
+        <Button
+            android:id="@+id/buttonEndQuiz"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Selesai"
+            android:textSize="18sp"
+            android:visibility="gone"
+            android:layout_centerHorizontal="true"
+            style="@style/CustomBlueRoundButton"/>
+    </LinearLayout>
+    </RelativeLayout>
+</ScrollView>
+
+
+

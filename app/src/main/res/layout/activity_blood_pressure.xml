@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/white"
+    tools:context=".ui.bloodpressure.BloodPressureActivity">
+
+  <com.google.android.material.button.MaterialButton
+      android:id="@+id/btn_back_bp"
+      style="@style/BlueRoundButtonNoOutline"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:text="@string/back"
+      android:textSize="16sp"
+      android:layout_marginStart="14dp"
+      android:layout_marginTop="5dp"
+      android:layout_marginBottom="3dp"/>
+
+  <ScrollView
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+      <LinearLayout
+          android:id="@+id/bp_layout_1"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:orientation="vertical"
+          android:paddingHorizontal="16dp"
+          android:paddingVertical="20dp"
+          android:background="@drawable/bottom_rounded_shadow">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/blood_pressure"
+            android:textAlignment="center"
+            android:fontFamily="@font/inter_bold"
+            android:textSize="26sp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/blood_pressure_desc"
+            android:textAlignment="center"
+            android:fontFamily="@font/inter_medium"
+            android:textSize="20sp"
+            android:paddingHorizontal="30dp"
+            android:layout_marginVertical="10dp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/bp"
+            android:textAlignment="center"
+            android:fontFamily="@font/inter_semibold"
+            android:textSize="20sp"
+            android:paddingHorizontal="35dp"
+            android:layout_marginVertical="10dp"/>
+
+        <RelativeLayout
+            android:layout_width="230dp"
+            android:layout_height="48dp"
+            android:background="@drawable/custom_edit_text"
+            android:padding="6dp"
+            android:layout_marginBottom="10dp"
+            android:layout_gravity="center_horizontal"
+            android:gravity="center_vertical">
+
+          <EditText
+              android:id="@+id/etBloodPressure"
+              android:layout_width="140dp"
+              android:layout_height="wrap_content"
+              android:layout_gravity="center_horizontal"
+              android:background="@color/white"
+              android:hint="Co: 10/20"
+              android:minHeight="48dp"
+              android:paddingStart="12dp"
+              android:paddingEnd="0dp"
+              tools:ignore="SpeakableTextPresentCheck" />
+
+          <TextView
+              android:layout_width="match_parent"
+              android:layout_height="48dp"
+              android:text="mmHg"
+              android:textAlignment="textEnd"
+              android:textSize="18sp"
+              android:fontFamily="@font/inter_medium"
+              android:paddingStart="0dp"
+              android:paddingEnd="6dp"
+              android:layout_marginVertical="4dp"
+              android:layout_alignParentEnd="true"
+              android:layout_toEndOf="@id/etBloodPressure"/>
+        </RelativeLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/pulse"
+            android:textAlignment="center"
+            android:fontFamily="@font/inter_semibold"
+            android:textSize="20sp"
+            android:paddingHorizontal="35dp"
+            android:layout_marginVertical="10dp"/>
+
+        <RelativeLayout
+            android:layout_width="230dp"
+            android:layout_height="48dp"
+            android:background="@drawable/custom_edit_text"
+            android:padding="6dp"
+            android:layout_marginBottom="10dp"
+            android:layout_gravity="center_horizontal"
+            android:gravity="center_vertical">
+
+          <EditText
+              android:id="@+id/etPulse"
+              android:layout_width="140dp"
+              android:layout_height="wrap_content"
+              android:minHeight="48dp"
+              android:layout_gravity="center_horizontal"
+              android:background="@color/white"
+              android:hint="Co: 10"
+              android:fontFamily="@font/inter_medium"
+              android:textSize="18sp"
+              android:paddingStart="12dp"
+              android:paddingEnd="0dp"
+              tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
+
+          <TextView
+              android:layout_width="match_parent"
+              android:layout_height="48dp"
+              android:text="/ menit"
+              android:textAlignment="textEnd"
+              android:textSize="18sp"
+              android:layout_marginVertical="4dp"
+              android:paddingEnd="6dp"
+              android:fontFamily="@font/inter_medium"
+              android:layout_alignParentEnd="true"
+              android:layout_toEndOf="@id/etPulse"/>
+        </RelativeLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Tanggal Sekarang"
+            android:textAlignment="center"
+            android:fontFamily="@font/inter_semibold"
+            android:textSize="20sp"
+            android:paddingHorizontal="35dp"
+            android:layout_marginVertical="10dp"/>
+
+        <TextView
+            android:id="@+id/tv_date_bp"
+            android:layout_width="230dp"
+            android:layout_height="wrap_content"
+            android:minHeight="48dp"
+            android:hint="DD/MM/YYYY"
+            android:textAlignment="center"
+            android:fontFamily="@font/inter_medium"
+            android:textSize="18sp"
+            android:background="@drawable/custom_edit_text"
+            android:paddingHorizontal="35dp"
+            android:gravity="center"
+            android:layout_gravity="center_horizontal"/>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_save_bp"
+            style="@style/CustomBlueRoundButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/save_bp_pulse"
+            android:textSize="18sp"
+            android:fontFamily="@font/inter_bold"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="26dp"
+            android:layout_marginBottom="10dp"/>
+
+      </LinearLayout>
+
+      <LinearLayout
+          android:id="@+id/bp_layout_2"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:orientation="vertical"
+          android:layout_below="@id/bp_layout_1">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/history"
+            android:fontFamily="@font/inter_bold"
+            android:textSize="22sp"
+            android:paddingHorizontal="16dp"
+            android:layout_marginTop="18dp"/>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_bp_history"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:listitem="@layout/item_bp_history"/>
+
+      </LinearLayout>
+    </RelativeLayout>
+  </ScrollView>
+</LinearLayout>

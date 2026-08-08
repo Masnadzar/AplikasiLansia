@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
+    <uses-permission android:name="com.android.alarm.permission.SET_ALARM" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+
+    <application
+        android:allowBackup="true"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="@xml/backup_rules"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.AplikasiLansia"
+        tools:targetApi="31">
+        <activity
+            android:name=".SplashScreenActivity"
+            android:exported="true" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".ui.quiz.QuizInstructionActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.reminder.EditReminderActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ForgotPassActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.quizResult.QuizResultActivity"
+            android:exported="false" />
+        <activity
+            android:name=".RegisterStep3Activity"
+            android:exported="false" />
+        <activity
+            android:name=".RegisterStep2Activity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.newreminder.AddReminderActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.healthcare.HealthCareActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.reminder.ReminderActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.news.NewsContentActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.bloodpressure.BloodPressureActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.quiz.QuizActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.editprofile.EditProfileActivity"
+            android:exported="false" />
+        <activity
+            android:name=".RegisterActivity"
+            android:exported="false" />
+        <activity
+            android:name=".MainActivity"
+            android:exported="false"
+            android:theme="@style/Theme.AplikasiLansia" />
+        <activity
+            android:name=".LoginActivity"
+            android:exported="false"
+            android:theme="@style/Theme.AplikasiLansia" />
+        <activity
+            android:name=".OnboardingActivity"
+            android:exported="false">
+        </activity>
+
+        <service
+            android:name=".messaging.MyFirebaseMessagingService"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+
+        <receiver
+            android:name=".messaging.ReminderReceiver"
+            android:enabled="true"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
+    </application>
+
+</manifest>

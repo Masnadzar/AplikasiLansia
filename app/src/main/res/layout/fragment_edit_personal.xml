@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".ui.editprofile.EditPersonalFragment">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@color/white"
+        android:padding="18dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/nama"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="10dp" />
+
+            <EditText
+                android:id="@+id/et_username_profile"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_marginBottom="20dp"
+                android:background="@drawable/custom_edit_text"
+                android:drawablePadding="8dp"
+                android:gravity="center_vertical"
+                android:textSize="18sp"
+                app:drawableStartCompat="@drawable/custom_ic_person"
+                tools:ignore="SpeakableTextPresentCheck" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/email"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="10dp" />
+
+            <TextView
+                android:id="@+id/tv_email_edit"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:background="@drawable/custom_edit_text"
+                android:text="Nama user"
+                android:textColor="@color/grey"
+                android:textSize="18sp"
+                android:gravity="center_vertical"
+                app:drawableStartCompat="@drawable/custom_ic_email"
+                android:drawablePadding="8dp"
+                android:layout_marginBottom="20dp"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/jeniskelamin"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="10dp" />
+
+            <TextView
+                android:id="@+id/tv_gender"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:background="@drawable/custom_edit_text" android:textSize="18sp"
+                android:gravity="center_vertical"
+                android:textColor="@color/grey"
+                app:drawableStartCompat="@drawable/custom_ic_gender"
+                android:drawablePadding="8dp"
+                android:layout_marginBottom="20dp"/>
+
+<!--            <RelativeLayout-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="48dp"-->
+<!--                android:layout_marginBottom="20dp"-->
+<!--                android:background="@drawable/custom_edit_text">-->
+
+<!--                <ImageView-->
+<!--                    android:id="@+id/spinner_icon"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:src="@drawable/custom_ic_gender"-->
+<!--                    android:layout_alignParentStart="true"-->
+<!--                    android:layout_centerVertical="true"-->
+<!--                    android:padding="0dp"/>-->
+
+<!--                <Spinner-->
+<!--                    android:id="@+id/spinner_edit_gender"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_centerVertical="true"-->
+<!--                    android:layout_marginStart="3dp"-->
+<!--                    android:layout_marginEnd="8dp"-->
+<!--                    android:layout_marginBottom="20dp"-->
+<!--                    android:layout_toEndOf="@id/spinner_icon"-->
+<!--                    android:minHeight="48dp"-->
+<!--                    android:spinnerMode="dropdown"-->
+<!--                    tools:ignore="TouchTargetSizeCheck"-->
+<!--                    android:entries="@array/gender_array"/>-->
+<!--            </RelativeLayout>-->
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/tanggallahir"
+                        android:textSize="20sp"
+                        android:textStyle="bold"
+                        android:layout_marginBottom="10dp" />
+
+                    <TextView
+                        android:id="@+id/tv_edit_birthdate"
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:background="@drawable/custom_edit_text"
+                        android:text="Nama user"
+                        android:textSize="18sp"
+                        android:gravity="center_vertical"
+                        app:drawableStartCompat="@drawable/custom_ic_date"
+                        android:drawablePadding="8dp"
+                        android:layout_marginBottom="20dp"/>
+                </LinearLayout>
+
+                <Space
+                    android:layout_width="16dp"
+                    android:layout_height="match_parent" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/usia"
+                        android:textSize="20sp"
+                        android:textStyle="bold"
+                        android:layout_marginBottom="10dp" />
+
+                    <TextView
+                        android:id="@+id/tv_edit_age"
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:background="@drawable/custom_edit_text"
+                        android:textSize="18sp"
+                        android:gravity="center_vertical"
+                        app:drawableStartCompat="@drawable/custom_ic_people"
+                        android:drawablePadding="8dp"
+                        android:layout_marginBottom="20dp"/>
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="20dp"
+            android:layout_marginTop="40dp">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_cancel_edit"
+                style="@style/CustomWhiteRoundButton"
+                android:layout_width="120dp"
+                android:layout_height="wrap_content"
+                android:text="@string/cancel"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/btn_save_edit"
+                app:layout_constraintHorizontal_weight="1"/>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_save_edit"
+                style="@style/CustomBlueRoundButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="16dp"
+                android:paddingHorizontal="28dp"
+                android:text="@string/save"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toEndOf="@+id/btn_cancel_edit"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_weight="1"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    </LinearLayout>
+
+</ScrollView>

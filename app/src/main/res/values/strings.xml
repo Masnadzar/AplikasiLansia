@@ -1,0 +1,237 @@
+<resources>
+    <string name="app_name">Nula</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="splash_screen">Ini Splash Screen</string>
+
+    <string name="lorem_ipsum">
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam in scelerisque sem. Mauris
+        volutpat, dolor id interdum ullamcorper, risus dolor egestas lectus, sit amet mattis purus
+        dui nec risus. Maecenas non sodales nisi, vel dictum dolor. Class aptent taciti sociosqu ad
+        litora torquent per conubia nostra, per inceptos himenaeos. Suspendisse blandit eleifend
+        diam, vel rutrum tellus vulputate quis. Aliquam eget libero aliquet, imperdiet nisl a,
+        ornare ex. Sed rhoncus est ut libero porta lobortis. Fusce in dictum tellus.\n\n
+        Suspendisse interdum ornare ante. Aliquam nec cursus lorem. Morbi id magna felis. Vivamus
+        egestas, est a condimentum egestas, turpis nisl iaculis ipsum, in dictum tellus dolor sed
+        neque. Morbi tellus erat, dapibus ut sem a, iaculis tincidunt dui. Interdum et malesuada
+        fames ac ante ipsum primis in faucibus. Curabitur et eros porttitor, ultricies urna vitae,
+        molestie nibh. Phasellus at commodo eros, non aliquet metus. Sed maximus nisl nec dolor
+        bibendum, vel congue leo egestas.\n\n
+        Sed interdum tortor nibh, in sagittis risus mollis quis. Curabitur mi odio, condimentum sit
+        amet auctor at, mollis non turpis. Nullam pretium libero vestibulum, finibus orci vel,
+        molestie quam. Fusce blandit tincidunt nulla, quis sollicitudin libero facilisis et. Integer
+        interdum nunc ligula, et fermentum metus hendrerit id. Vestibulum lectus felis, dictum at
+        lacinia sit amet, tristique id quam. Cras eu consequat dui. Suspendisse sodales nunc ligula,
+        in lobortis sem porta sed. Integer id ultrices magna, in luctus elit. Sed a pellentesque
+        est.\n\n
+        Aenean nunc velit, lacinia sed dolor sed, ultrices viverra nulla. Etiam a venenatis nibh.
+        Morbi laoreet, tortor sed facilisis varius, nibh orci rhoncus nulla, id elementum leo dui
+        non lorem. Nam mollis ipsum quis auctor varius. Quisque elementum eu libero sed commodo. In
+        eros nisl, imperdiet vel imperdiet et, scelerisque a mauris. Pellentesque varius ex nunc,
+        quis imperdiet eros placerat ac. Duis finibus orci et est auctor tincidunt. Sed non viverra
+        ipsum. Nunc quis augue egestas, cursus lorem at, molestie sem. Morbi a consectetur ipsum, a
+        placerat diam. Etiam vulputate dignissim convallis. Integer faucibus mauris sit amet finibus
+        convallis.\n\n
+        Phasellus in aliquet mi. Pellentesque habitant morbi tristique senectus et netus et
+        malesuada fames ac turpis egestas. In volutpat arcu ut felis sagittis, in finibus massa
+        gravida. Pellentesque id tellus orci. Integer dictum, lorem sed efficitur ullamcorper,
+        libero justo consectetur ipsum, in mollis nisl ex sed nisl. Donec maximus ullamcorper
+        sodales. Praesent bibendum rhoncus tellus nec feugiat. In a ornare nulla. Donec rhoncus
+        libero vel nunc consequat, quis tincidunt nisl eleifend. Cras bibendum enim a justo luctus
+        vestibulum. Fusce dictum libero quis erat maximus, vitae volutpat diam dignissim.
+    </string>
+
+    <string name="title_activity_welcome">Home Screen</string>
+    <string name="next">Lanjut</string>
+    <string name="skip">Kembali</string>
+    <string name="start">Mulai</string>
+
+    <string name="slide_1_title">Screen 1</string>
+    <string name="slide_1_desc">Description Screen 1</string>
+
+    <string name="slide_2_title">Screen 2</string>
+    <string name="slide_2_desc">Description Screen 2</string>
+
+    <string name="slide_3_title">Screen 3</string>
+    <string name="slide_3_desc">Description Screen 3</string>
+
+    <string name="play_again_desc">To see the welcome slider again, goto Settings -> apps -> welcome slider -> clear data</string>
+    <string name="play_again">Play Again</string>
+    <!-- Strings used for fragments for navigation -->
+    <string name="first_fragment_label">First Fragment</string>
+    <string name="second_fragment_label">Second Fragment</string>
+    <string name="previous">Previous</string>
+
+    <string name="title_home">Beranda</string>
+    <string name="title_tes_depresi">Tingkat Depresi</string>
+    <string name="title_news"><![CDATA[Berita & Tips]]></string>
+    <string name="title_profile">Profil</string>
+    <string name="onboard2">Mulai perjalanan Anda untuk memahami kesehatan mental dan mengetahui apakah Anda memerlukan dukungan lebih lanjut</string>
+    <string name="onboard2_title">Kenali Kesehatan Mental Anda</string>
+    <string name="onboard1_title">Deteksi Depresi Dengan Tes Sederhana</string>
+    <string name="onboard1">Kami akan membantu Anda mengetahui tingkat depresi Anda melalui tes sederhana</string>
+    <string name="onboard3_title">Prioritaskan Kesehatan Mental Anda</string>
+    <string name="onboard3">Mulai perjalanan dan mengetahui tingkat depresi Anda. Kesehatan mental Anda adalah prioritas kami</string>
+    <string name="detailprofil">Detail Profil</string>
+    <string name="editprofil">Edit</string>
+    <string name="nama">Nama</string>
+    <string name="email">Email</string>
+    <string name="jeniskelamin">Jenis Kelamin</string>
+    <string name="tanggallahir">Tanggal Lahir</string>
+    <string name="usia">Usia</string>
+    <string name="keluar">Keluar Akun</string>
+    <string name="profile_name">Nama Pengguna</string>
+    <string name="save">Simpan</string>
+    <string name="cancel">Batal</string>
+    <string name="angka_tensi">--/--</string>
+    <string name="menit_tensi">--</string>
+    <string name="cari_pelayanan">Cari Pelayanan Kesehatan di Sekitar Anda</string>
+    <string name="profilepersonal">Data Pribadi</string>
+    <string name="riwayatPenyakit">Riwayat Penyakit</string>
+    <string name="lamaPenyakit">Lama Menderita Penyakit</string>
+    <string name="care_giver">Yang Merawat Saat Sakit</string>
+    <string name="status_kawin">Status Perkawinan</string>
+    <string name="profilehealth">Data Kesehatan</string>
+    <string name="welcome_login">Selamat Datang,</string>
+    <string name="welcome_login_2">Masukkan email dan kata sandi anda untuk masuk</string>
+    <string name="forgot_pass"><u>Lupa kata sandi?</u></string>
+    <string name="masuk">Masuk</string>
+    <string name="create_account">Belum punya akun? </string>
+    <string name="password">Kata Sandi</string>
+    <string name="register_welcome">Anda harus membuat akun untuk masuk</string>
+    <string name="already_have_acc">Sudah punya akun?</string>
+    <string name="create_to_reg"> Buat Akun</string>
+    <string name="news_content">Setelah menginjak usia lanjut, kebanyakan orang mengurangi aktivitas sehari-hari, karena stamina sudah jauh berkurang, punya kondisi kesehatan tertentu, atau tidak ada kesempatan. Padahal, orang lanjut usia (lansia) justru harus tetap aktif dengan melakukan beragam aktivitas yang berguna setiap hari agar lansia sehat dan bugar. Apa manfaat dari melakukan aktivitas bagi lansia dan aktivitas apa saja yang bisa dilakukan? Aktivitas, baik fisik, sosial, maupun kegiatan berguna lainnya, bisa memberikan beragam manfaat</string>
+    <string name="back">Kembali</string>
+    <string name="dengarkan">Dengarkan</string>
+    <string name="reminder">Pengingat</string>
+    <string name="reminder_ongoing">Sedang Berlangsung</string>
+    <string name="add_reminder">Tambah Pengingat</string>
+    <string name="filter_reminder">Filter Pengingat</string>
+    <string name="health_care">Pelayanan Kesehatan</string>
+    <string name="health_care_2">Cari dan temukan layanan kesehatan di sekitar Anda</string>
+    <string name="health_search_hint">Pilih Kota Anda</string>
+    <string name="lihat_detail">Lihat Detail</string>
+    <string name="riwayat">Riwayat</string>
+    <string name="mulai_cek">Mulai Tes</string>
+    <string name="cek_depresi_text_2">Mulailah perjalanan Anda menuju kesejahteraan mental dengan satu tes sederhana. Mulai sekarang dengan Nula</string>
+    <string name="cek_depresi_text_1">Tidak yakin dengan perasaan Anda?</string>
+    <string name="ubah">Ubah</string>
+    <string name="delete">Hapus</string>
+    <string name="create_reminder">Tambah Reminder</string>
+    <string name="edit_ic_reminder">Edit Ikon Pengingat</string>
+    <string name="reminder_title">Judul Pengingat</string>
+    <string name="catatan">Catatan</string>
+    <string name="hari">Hari</string>
+    <string name="jam">Jam</string>
+    <string name="blood_pressure">Tensi Darah</string>
+    <string name="blood_pressure_desc">Masukkan tensi darah Anda secara berkala sehingga terpantau dengan baik</string>
+    <string name="bp">Tekanan Darah</string>
+    <string name="pulse">Denyut Nadi</string>
+    <string name="history">Riwayat</string>
+    <string name="save_bp_pulse">Simpan Tensi</string>
+    <string name="lengkapi_data">Lengkapi Data Kesehatan</string>
+    <string name="lengkapi_data_2">Berikan riwayat penyakit Anda beserta lama Anda menderita</string>
+    <string name="penyakit">Penyakit</string>
+    <string name="lamanya">Lamanya</string>
+    <string name="tambah_penyakit">Tambah Penyakit</string>
+    <string name="simpan_riwayat_penyakit">Simpan Riwayat Penyakit</string>
+    <string name="tambah_foto">Tambah foto anda</string>
+    <string name="lengkapi_data_3">Lengkapi data kesehatan sesuai kebutuhan Anda</string>
+    <string name="bulan">Bulan</string>
+    <string name="tahun">Tahun</string>
+    <string name="age_format">%d Tahun</string>
+    <string name="source">"Sumber : "</string>
+    <string name="health_care_pilih_kota">Silakan pilih kota Anda untuk menemukan layanan kesehatan terdekat</string>
+    <string name="confirm_logout">Apakah Anda yakin ingin keluar dari akun Anda?</string>
+    <string name="reset_password">Lupa Kata Sandi</string>
+    <string name="reset_password_2">Pemulihan Kata Sandi</string>
+    <string name="reset_password_3">Silahkan masukkan email anda untuk melakukan membuat kata sandi baru</string>
+    <string name="send">Kirim</string>
+    <string name="yakin">Yakin</string>
+    <string name="tidak">Tidak</string>
+    <string name="kembali">Kembali</string>
+    <string name="close">Tutup</string>
+    <string name="confirm_delete">Apakah anda yakin ingin menghapus pengingat?</string>
+    <string name="edit_reminder">Ubah Pengingat</string>
+    <string name="contoh_tbc">Contoh: TBC</string>
+    <string name="confirm_quiz">Anda yakin ingin
+        <br>mengakhiri tes?</br></string>
+    <string name="instruksi_tes">Instruksi Tes</string>
+    <string name="desc_satu">Tes ini bertujuan untuk mengukur tingkat depresi yang mungkin Anda alami berdasarkan pernyataan-pernyataan yang diberikan. Terdapat 15 pertanyaan dalam tes ini yang harus dijawab dengan \"Ya\" atau \"Tidak\".</string>
+    <!--    <string name="desc_tiga">\u2022 Semua pertanyaan wajib dijawab sesuai dengan perasaan dan pengalaman Anda. \n\n \u2022 Tidak ada jawaban yang benar atau salah dalam tes ini. \n\n \u2022 Jawaban Anda hanya akan digunakan untuk memahami kondisi emosional Anda. \n\n \u2022 Anda bisa mengulang pengerjaan tes kapan saja jika diperlukan.</string>-->
+    <string name="desc_tiga">
+         <li>Semua pertanyaan wajib dijawab sesuai dengan perasaan dan pengalaman Anda</li>
+        \n\n <li>Tidak ada jawaban yang benar atau salah dalam tes ini</li>
+        \n\n <li>Jawaban Anda hanya akan digunakan untuk memahami kondisi emosional Anda.</li>
+        \n\n <li>Anda bisa mengulang pengerjaan tes kapan saja jika diperlukan.</li>
+    </string>
+    <string name="desc_empat">\nSelamat Mengerjakan!</string>
+    <string name="password_require">Minimal terdiri dari 6 karakter</string>
+    <string name="nula">NULA</string>
+    <string name="nula_tag_line">Bahagia </string>
+    <string name="nula_tag_line_2"> Sepanjang Masa</string>
+    <string name="developed_by">Developed by\nUPN Veteran Jakarta</string>
+
+    <string-array name="gender_array">
+        <item>Jenis Kelamin</item>
+        <item>Laki-laki</item>
+        <item>Perempuan</item>
+    </string-array>
+
+    <string-array name="health_care">
+        <item>Pilih Kota Anda</item>
+        <item>Jakarta</item>
+        <item>Bogor</item>
+        <item>Depok</item>
+        <item>Tangerang</item>
+        <item>Bekasi</item>
+    </string-array>
+
+    <string-array name="filter_reminder">
+        <item>Semua Pengingat</item>
+        <item>Hari Ini</item>
+        <item>Besok</item>
+        <item>Yang Akan Datang</item>
+    </string-array>
+
+    <string-array name="day_array">
+        <item>Pilih hari</item>
+        <item>Senin</item>
+        <item>Selasa</item>
+        <item>Rabu</item>
+        <item>Kamis</item>
+        <item>Jumat</item>
+        <item>Sabtu</item>
+        <item>Minggu</item>
+    </string-array>
+
+    <string-array name="care_giver">
+        <item>--Pilih yang Merawat--</item>
+        <item>Istri</item>
+        <item>Suami</item>
+        <item>Anak Laki-Laki</item>
+        <item>Anak Perempuan</item>
+        <item>Cucu Laki-Laki</item>
+        <item>Cucu Perempuan</item>
+        <item>Menantu Laki-Laki</item>
+        <item>Menantu Perempuan</item>
+        <item>Saudara Lain</item>
+        <item>Saudara Jauh</item>
+        <item>Orang Lain</item>
+    </string-array>
+
+
+    <string-array name="marital_status">
+        <item>--Pilih Status--</item>
+        <item>Belum Kawin</item>
+        <item>Kawin</item>
+        <item>Cerai Hidup</item>
+        <item>Cerai Mati</item>
+    </string-array>
+
+<!--    <resources>-->
+        <string name="server_client_id" translatable="false">256979860495-s2pdt23dusmndfv8rkoleu5jeinjeqrd.apps.googleusercontent.com</string>
+<!--    </resources>-->
+
+</resources>

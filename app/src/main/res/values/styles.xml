@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:ns1="http://schemas.android.com/apk/res-auto">
+    <style name="GoogleRegButton" parent="Widget.MaterialComponents.Button">
+        <item name="android:textColor">@color/darkgrey</item>
+        <item name="cornerRadius">@dimen/custom_btn_corner</item>
+        <item name="backgroundTint">@color/white</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="strokeWidth">2dp</item>
+        <item name="android:padding">10dp</item>
+        <item name="strokeColor">@color/blue1</item>
+        <item name="android:stateListAnimator">@null</item> <!-- Disable elevation -->
+    </style>
+
+    <style name="BottomNavigationStyle">
+        <item name="android:gravity">center</item>
+        <item name="android:lines">2</item>
+    </style>
+
+    <style name="CustomBlueButton" parent="Widget.MaterialComponents.Button">
+        <item name="android:textColor">@color/white</item>
+        <item name="cornerRadius">@dimen/custom_btn_corner</item>
+        <item name="backgroundTint">@color/blue2</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:stateListAnimator">@null</item> <!-- Disable elevation -->
+        <item name="android:padding">10dp</item>
+    </style>
+
+    <style name="CustomBlueRoundButton" parent="Widget.MaterialComponents.Button">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textStyle">bold</item>
+        <item name="cornerRadius">50dp</item>
+        <item name="backgroundTint">@color/blue2</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:paddingLeft">20dp</item>
+        <item name="android:paddingRight">20dp</item>
+        <item name="android:paddingTop">10dp</item>
+        <item name="android:paddingBottom">10dp</item>
+        <item name="android:stateListAnimator">@null</item> <!-- Disable elevation -->
+    </style>
+
+    <style name="BlueRoundButtonNoOutline" parent="Widget.MaterialComponents.Button">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textStyle">bold</item>
+        <item name="cornerRadius">50dp</item>
+        <item name="backgroundTint">@color/blue2</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:paddingLeft">14dp</item>
+        <item name="android:paddingRight">14dp</item>
+        <item name="android:paddingTop">5dp</item>
+        <item name="android:paddingBottom">5dp</item>
+        <item name="elevation">34dp</item>
+        <item name="android:insetLeft">0dp</item>
+        <item name="android:insetRight">0dp</item>
+        <item name="android:insetTop">6dp</item>
+        <item name="android:insetBottom">6dp</item>
+    </style>
+
+    <style name="CustomWhiteRoundButton" parent="Widget.MaterialComponents.Button">
+        <item name="android:textColor">@color/blue2</item>
+        <item name="android:textStyle">bold</item>
+        <item name="cornerRadius">50dp</item>
+        <item name="backgroundTint">@color/white</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="strokeColor">@color/blue2</item>
+        <item name="strokeWidth">2dp</item>
+        <item name="android:paddingLeft">20dp</item>
+        <item name="android:paddingRight">20dp</item>
+        <item name="android:paddingTop">10dp</item>
+        <item name="android:paddingBottom">10dp</item>
+        <item name="android:stateListAnimator">@null</item> <!-- Disable elevation -->
+    </style>
+
+    <style name="numberDisplay" parent="Widget.MaterialComponents.Button">
+        <item name="android:textStyle">bold</item>
+        <item name="cornerRadius">8dp</item>
+        <item name="backgroundTint">@color/white</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:paddingLeft">8dp</item>
+        <item name="android:paddingRight">8dp</item>
+        <item name="android:paddingTop">10dp</item>
+        <item name="android:paddingBottom">10dp</item>
+        <item name="android:textSize">24sp</item>
+        <item name="strokeColor">@color/blue1</item>
+        <item name="strokeWidth">2dp</item>
+    </style>
+
+    <style name="WhiteRoundButtonNoOutline" parent="Widget.MaterialComponents.Button">
+        <item name="android:textColor">@color/blue2</item>
+        <item name="android:textStyle">bold</item>
+        <item name="cornerRadius">50dp</item>
+        <item name="backgroundTint">@color/white</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:paddingLeft">20dp</item>
+        <item name="android:paddingRight">20dp</item>
+        <item name="android:paddingTop">10dp</item>
+        <item name="android:paddingBottom">10dp</item>
+        <item name="elevation">4dp</item>
+    </style>
+
+    <dimen name="custom_btn_corner">13dp</dimen>
+    <color name="darkgrey">#333333</color>
+</resources>
