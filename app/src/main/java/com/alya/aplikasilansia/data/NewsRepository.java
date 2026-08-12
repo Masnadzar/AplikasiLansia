@@ -3,17 +3,13 @@ package com.alya.aplikasilansia.data;
 import android.net.Uri;
 import android.util.Log;
 
-import androidx.annotation.NonNull;
 import androidx.lifecycle.MutableLiveData;
 
 import com.alya.aplikasilansia.ui.news.News;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
@@ -22,12 +18,12 @@ import java.util.List;
 
 public class NewsRepository {
     private FirebaseAuth mAuth;
-    private DatabaseReference mDatabase;
-    private StorageReference mStorage; // Firebase Storage reference
+    private FirebaseFirestore db; // DIUBAH: dari DatabaseReference (RTDB) -> FirebaseFirestore
+    private StorageReference mStorage; // Firebase Storage reference -> TIDAK BERUBAH
 
     public NewsRepository() {
         mAuth = FirebaseAuth.getInstance();
-        mDatabase = FirebaseDatabase.getInstance().getReference();
+        db = FirebaseFirestore.getInstance(); // DIUBAH: FirebaseDatabase.getInstance().getReference()
         mStorage = FirebaseStorage.getInstance().getReference("news_images"); // Storage reference
     }
 
@@ -36,34 +32,31 @@ public class NewsRepository {
         FirebaseUser firebaseUser = mAuth.getCurrentUser();
 
         if (firebaseUser != null) {
-            DatabaseReference newsRef = mDatabase.child("news");
+            // DIUBAH: mDatabase.child("news") -> collection("news")
+            db.collection("news")
+                    .get() // DIUBAH: addListenerForSingleValueEvent -> get()
+                    .addOnSuccessListener(querySnapshot -> {
+                        List<News> newsList = new ArrayList<>();
+                        for (QueryDocumentSnapshot doc : querySnapshot) {
+                            String name = doc.getString("name");
+                            String date = doc.getString("date");
+                            String category = doc.getString("category");
+                            String source = doc.getString("source");
+                            String image = doc.getString("image");
+                            String newsContent = doc.getString("newsContent");
 
-            newsRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot snapshot) {
-                    List<News> newsList = new ArrayList<>();
-                    for (DataSnapshot newsSnapshot : snapshot.getChildren()) {
-                        String name = newsSnapshot.child("name").getValue(String.class);
-                        String date = newsSnapshot.child("date").getValue(String.class);
-                        String category = newsSnapshot.child("category").getValue(String.class);
-                        String source = newsSnapshot.child("source").getValue(String.class);
-                        String image = newsSnapshot.child("image").getValue(String.class);
-                        String newsContent = newsSnapshot.child("newsContent").getValue(String.class);
+                            Uri newsImageUri = (image != null) ? Uri.parse(image) : null;
 
-                        Uri newsImageUri = (image != null) ? Uri.parse(image) : null;
-
-                        News news = new News(name, date, category, source, newsImageUri, newsContent);
-                        newsList.add(news);
-                    }
-                    newsLiveData.setValue(newsList);
-                }
-
-                @Override
-                public void onCancelled(@NonNull DatabaseError error) {
-                    Log.e("NewsRepository", "Database error: ", error.toException());
-                    newsLiveData.setValue(null); // Optionally set the value to null to indicate a failure
-                }
-            });
+                            News news = new News(name, date, category, source, newsImageUri, newsContent);
+                            newsList.add(news);
+                        }
+                        newsLiveData.setValue(newsList);
+                    })
+                    .addOnFailureListener(e -> {
+                        // DIUBAH: onCancelled -> addOnFailureListener
+                        Log.e("NewsRepository", "Firestore error: ", e);
+                        newsLiveData.setValue(null);
+                    });
         }
         return newsLiveData;
     }

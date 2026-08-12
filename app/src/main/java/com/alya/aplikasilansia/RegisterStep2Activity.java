@@ -71,7 +71,11 @@ public class RegisterStep2Activity extends AppCompatActivity {
                 if (inputDataList != null && !inputDataList.isEmpty()) {
                     UserData userData = UserData.getInstance();
                     userData.setMedHistory(inputDataList);
-                    userData.setProfileImageUrl(selectedImageUri);
+                    // UserData menyimpan profileImageUrl sebagai String agar sesuai
+                    // dengan format dokumen Firestore. Uri lokal (hasil pilih galeri)
+                    // baru diunggah ke Firebase Storage setelah registrasi berhasil,
+                    // sehingga di sini kita simpan representasi String-nya dulu.
+                    userData.setProfileImageUrl(selectedImageUri != null ? selectedImageUri.toString() : null);
                     Log.d("RegisterStep2Activity", "profile image to send: " +selectedImageUri);
 
                     Intent register3 = new Intent(RegisterStep2Activity.this, RegisterStep3Activity.class);
