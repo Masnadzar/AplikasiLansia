@@ -4,7 +4,9 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
+    <uses-permission
+        android:name="android.permission.SCHEDULE_EXACT_ALARM"
+        tools:ignore="ProtectedPermissions" />
     <uses-permission android:name="com.android.alarm.permission.SET_ALARM" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <!-- WAJIB untuk Android 13+ (API 33+), tanpa ini notifikasi ditolak sistem secara diam-diam -->
@@ -55,6 +57,9 @@
             android:exported="false" />
         <activity
             android:name=".ui.reminder.ReminderActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.reminder.ReminderHistoryActivity"
             android:exported="false" />
         <activity
             android:name=".ui.news.NewsContentActivity"

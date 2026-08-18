@@ -8,6 +8,7 @@ import androidx.lifecycle.MutableLiveData;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.text.ParseException;
@@ -168,5 +169,63 @@ public class ReminderRepository {
         } else {
             errorLiveData.postValue("User not authenticated");
         }
+    }
+
+    // ================== BARU: Riwayat Pengingat ==================
+    // Ditambahkan supaya setiap reminder yang SUDAH bunyi tercatat di subcollection
+    // terpisah "reminder_history", tidak tercampur dengan reminder yang masih terjadwal
+    // di subcollection "reminders". Dengan begini, riwayat tetap ada walau reminder
+    // aslinya sudah lewat/terhapus.
+
+    /**
+     * Dipanggil dari ReminderReceiver setiap kali notifikasi reminder benar-benar muncul.
+     * userId dikirim langsung dari ReminderScheduler (bukan dari FirebaseAuth.getCurrentUser())
+     * karena BroadcastReceiver bisa saja dieksekusi sistem saat state auth belum tentu sama
+     * dengan saat reminder pertama dijadwalkan.
+     */
+    public void addReminderHistory(String userId, String reminderId, String title, String desc, int icon, String triggeredAt) {
+        if (userId == null) {
+            Log.e("ReminderRepository", "addReminderHistory: userId is null, skip saving history");
+            return;
+        }
+        ReminderHistory history = new ReminderHistory(reminderId, userId, title, desc, icon, triggeredAt);
+        db.collection("users").document(userId).collection("reminder_history")
+                .add(history)
+                .addOnSuccessListener(docRef ->
+                        Log.d("ReminderRepository", "Reminder history saved, id=" + docRef.getId()))
+                .addOnFailureListener(e ->
+                        Log.e("ReminderRepository", "Failed to save reminder history: " + e.getMessage()));
+    }
+
+    /**
+     * Mengambil seluruh riwayat pengingat milik user yang sedang login,
+     * diurutkan dari yang PALING BARU trigger ke yang paling lama.
+     */
+    public MutableLiveData<List<ReminderHistory>> fetchReminderHistory() {
+        MutableLiveData<List<ReminderHistory>> historyLiveData = new MutableLiveData<>();
+        FirebaseUser firebaseUser = mAuth.getCurrentUser();
+
+        if (firebaseUser != null) {
+            db.collection("users").document(firebaseUser.getUid()).collection("reminder_history")
+                    .orderBy("triggeredAt", Query.Direction.DESCENDING)
+                    .get()
+                    .addOnSuccessListener(querySnapshot -> {
+                        List<ReminderHistory> histories = new ArrayList<>();
+                        for (QueryDocumentSnapshot doc : querySnapshot) {
+                            ReminderHistory history = doc.toObject(ReminderHistory.class);
+                            history.setId(doc.getId());
+                            histories.add(history);
+                        }
+                        historyLiveData.setValue(histories);
+                    })
+                    .addOnFailureListener(e -> {
+                        Log.e("ReminderRepository", "Failed to fetch reminder history: " + e.getMessage());
+                        historyLiveData.setValue(null);
+                    });
+        } else {
+            historyLiveData.setValue(null);
+        }
+
+        return historyLiveData;
     }
 }

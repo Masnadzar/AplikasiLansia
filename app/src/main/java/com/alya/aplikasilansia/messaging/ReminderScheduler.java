@@ -10,6 +10,9 @@ import android.os.Build;
 import android.provider.Settings;
 import android.util.Log;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -29,6 +32,14 @@ public class ReminderScheduler {
      * supaya tiap reminder punya alarm sendiri-sendiri yang independen.
      */
     public static void scheduleReminder(Context context, String reminderId, String title, String desc, String timestamp) {
+        // DIUBAH: overload tanpa icon dipertahankan supaya caller lama tetap kompatibel,
+        // icon di-default ke 0 (ReminderReceiver akan pakai ikon default kalau 0).
+        scheduleReminder(context, reminderId, title, desc, timestamp, 0);
+    }
+
+    // BARU: overload dengan parameter icon, supaya riwayat pengingat (reminder_history)
+    // juga bisa menampilkan ikon yang sama seperti reminder aslinya.
+    public static void scheduleReminder(Context context, String reminderId, String title, String desc, String timestamp, int icon) {
         Log.d(TAG, "scheduleReminder called for id=" + reminderId);
 
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
@@ -47,6 +58,14 @@ public class ReminderScheduler {
                 intent.setAction(ACTION_REMINDER);
                 intent.putExtra("title", title);
                 intent.putExtra("desc", desc);
+                // BARU: dikirim supaya ReminderReceiver bisa menyimpan riwayat pengingat
+                // (subcollection reminder_history) tanpa bergantung pada FirebaseAuth.getCurrentUser()
+                // di saat alarm benar-benar berbunyi -- yang tidak dijamin sama dengan
+                // user yang aktif saat reminder ini pertama kali dijadwalkan.
+                intent.putExtra("reminderId", reminderId);
+                intent.putExtra("icon", icon);
+                FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+                intent.putExtra("userId", currentUser != null ? currentUser.getUid() : null);
 
                 int requestCode = getRequestCode(reminderId); // DIUBAH: dari hardcode 0
                 PendingIntent pendingIntent = PendingIntent.getBroadcast(context, requestCode, intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);

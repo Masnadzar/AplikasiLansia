@@ -64,6 +64,10 @@ public class ReminderActivity extends AppCompatActivity implements View.OnClickL
             Button btnCreateReminder = findViewById(R.id.btn_add_reminder);
             btnCreateReminder.setOnClickListener(this);
 
+            // BARU: tombol menuju halaman Riwayat Pengingat
+            Button btnReminderHistory = findViewById(R.id.btn_reminder_history);
+            btnReminderHistory.setOnClickListener(this);
+
             filterSpinner = findViewById(R.id.dropdown_reminder_filter);
             setupSpinner(filterSpinner);
 
@@ -91,6 +95,10 @@ public class ReminderActivity extends AppCompatActivity implements View.OnClickL
             Intent intent = new Intent(ReminderActivity.this, AddReminderActivity.class);
             startActivity(intent);
             finish();
+        } else if (v.getId() == R.id.btn_reminder_history) {
+            // BARU: buka halaman Riwayat Pengingat
+            Intent intent = new Intent(ReminderActivity.this, ReminderHistoryActivity.class);
+            startActivity(intent);
         }
     }
     private void getFirstReminder() {

@@ -115,7 +115,7 @@ public class EditReminderActivity extends AppCompatActivity implements IconRemin
                 // PendingIntent baru, TAPI cancel() eksplisit ditambahkan sebagai jaga-jaga
                 // supaya perilakunya predictable di semua versi Android/OEM.
                 ReminderScheduler.cancelReminder(EditReminderActivity.this, reminderId);
-                ReminderScheduler.scheduleReminder(EditReminderActivity.this, reminderId, newTitle, desc, timestamp);
+                ReminderScheduler.scheduleReminder(EditReminderActivity.this, reminderId, newTitle, desc, timestamp, selectedIcon);
 
                 dataSavedDialog();
                 finish(); // Close the activity if you are in an edit activity

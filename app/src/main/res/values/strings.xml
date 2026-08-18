@@ -108,6 +108,8 @@
     <string name="reminder_ongoing">Sedang Berlangsung</string>
     <string name="add_reminder">Tambah Pengingat</string>
     <string name="filter_reminder">Filter Pengingat</string>
+    <string name="reminder_history_title">Riwayat Pengingat</string>
+    <string name="reminder_history_empty">Belum ada riwayat pengingat yang muncul.</string>
     <string name="health_care">Pelayanan Kesehatan</string>
     <string name="health_care_2">Cari dan temukan layanan kesehatan di sekitar Anda</string>
     <string name="health_search_hint">Pilih Kota Anda</string>

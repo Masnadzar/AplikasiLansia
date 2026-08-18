@@ -127,7 +127,7 @@ public class AddReminderActivity extends AppCompatActivity implements View.OnCli
             addReminderViewModel.createReminder(title, selectedDay, selectedTime, desc, timestamp, selectedIconResourceId,
                     reminderId -> {
                         Log.d("AddReminderActivity", "Reminder created with id=" + reminderId + ", scheduling notification");
-                        ReminderScheduler.scheduleReminder(AddReminderActivity.this, reminderId, title, desc, timestamp);
+                        ReminderScheduler.scheduleReminder(AddReminderActivity.this, reminderId, title, desc, timestamp, selectedIconResourceId);
                     });
         } else {
             incompleteFormDialog();
