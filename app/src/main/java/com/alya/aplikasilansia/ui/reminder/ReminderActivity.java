@@ -22,6 +22,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.alya.aplikasilansia.LoginActivity;
 import com.alya.aplikasilansia.R;
 import com.alya.aplikasilansia.data.Reminder;
+import com.alya.aplikasilansia.messaging.ReminderScheduler;
 import com.alya.aplikasilansia.ui.newreminder.AddReminderActivity;
 import com.google.firebase.auth.FirebaseAuth;
 
@@ -161,7 +162,7 @@ public class ReminderActivity extends AppCompatActivity implements View.OnClickL
                         if (reminderCalendar.after(Calendar.getInstance())) {
                             firstTodayReminder = reminder;
                             Log.d(TAG, "First today reminder set: " + firstTodayReminder.getTitle());                        }
-                            continue;
+                        continue;
                     }
                 }
 
@@ -189,13 +190,13 @@ public class ReminderActivity extends AppCompatActivity implements View.OnClickL
 
                 } else if (selectedFilter.equals("Hari Ini") && isSameDay(today, reminderCalendar)) {
                     if (reminderCalendar.after(Calendar.getInstance())) {
-                            if (!addedTodayHeader) {
-                                items.add("Hari Ini");
-                                addedTodayHeader = true;
-                            }
+                        if (!addedTodayHeader) {
+                            items.add("Hari Ini");
+                            addedTodayHeader = true;
+                        }
                         items.add(reminder);
                         itemsAdded = true;
-                        }
+                    }
 
 
                 } else if (selectedFilter.equals("Besok") && isSameDay(tomorrow, reminderCalendar)) {
@@ -337,6 +338,11 @@ public class ReminderActivity extends AppCompatActivity implements View.OnClickL
     public void onReminderDeleted(String reminderId) {
         adapter.removeReminder(reminderId);
         reminderViewModel.deleteReminderData(reminderId);
+        // BARU: batalkan alarm terjadwal untuk reminder ini juga -- kalau tidak,
+        // notifikasi tetap akan muncul di waktu yang dijadwalkan walau datanya
+        // sudah dihapus dari Firestore (alarm di AlarmManager berdiri sendiri,
+        // tidak otomatis ikut hilang saat data database dihapus).
+        ReminderScheduler.cancelReminder(this, reminderId);
         Log.d("ReminderActivity", "Reminder deleted, refreshing data");
         filterData();
         getFirstReminder();

@@ -17,6 +17,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.alya.aplikasilansia.R;
+import com.alya.aplikasilansia.messaging.ReminderScheduler;
 import com.alya.aplikasilansia.ui.newreminder.IconReminderFragment;
 import com.google.android.material.timepicker.MaterialTimePicker;
 import com.google.android.material.timepicker.TimeFormat;
@@ -34,7 +35,7 @@ public class EditReminderActivity extends AppCompatActivity implements IconRemin
     private String reminderId, daySelected;
     private int selectedIcon;
     ReminderViewModel reminderViewModel;
-    
+
     @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -106,8 +107,16 @@ public class EditReminderActivity extends AppCompatActivity implements IconRemin
         if (reminderId != null){
             reminderViewModel.editReminder(reminderId, newTitle, newDay, newTime, desc, timestamp, selectedIcon, () -> {
                 // This code runs after the reminder is successfully edited
-//                Toast.makeText(this, "Reminder updated successfully!", Toast.LENGTH_SHORT).show();
-                // Optionally, navigate back or refresh UI
+
+                // BARU: reschedule notifikasi dengan jadwal yang baru.
+                // WAJIB cancel dulu alarm LAMA sebelum bikin yang baru -- kalau tidak,
+                // dan requestCode lama & baru sama (karena pakai reminderId yang sama),
+                // FLAG_UPDATE_CURRENT sebenarnya sudah otomatis menimpa alarm lama dengan
+                // PendingIntent baru, TAPI cancel() eksplisit ditambahkan sebagai jaga-jaga
+                // supaya perilakunya predictable di semua versi Android/OEM.
+                ReminderScheduler.cancelReminder(EditReminderActivity.this, reminderId);
+                ReminderScheduler.scheduleReminder(EditReminderActivity.this, reminderId, newTitle, desc, timestamp);
+
                 dataSavedDialog();
                 finish(); // Close the activity if you are in an edit activity
                 // Or refresh the list in your RecyclerView, etc.

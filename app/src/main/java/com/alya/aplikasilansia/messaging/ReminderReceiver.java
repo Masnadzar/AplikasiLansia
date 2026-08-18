@@ -5,17 +5,11 @@ import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Handler;
 import android.util.Log;
-import android.view.Gravity;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.widget.ImageView;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.core.app.NotificationCompat;
 
+import com.alya.aplikasilansia.AppApplication;
 import com.alya.aplikasilansia.MainActivity;
 import com.alya.aplikasilansia.R;
 public class ReminderReceiver extends BroadcastReceiver {
@@ -32,16 +26,23 @@ public class ReminderReceiver extends BroadcastReceiver {
                 notificationIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, notificationIntent, PendingIntent.FLAG_ONE_SHOT | PendingIntent.FLAG_IMMUTABLE);
 
-                NotificationCompat.Builder builder = new NotificationCompat.Builder(context, "default")
+                NotificationCompat.Builder builder = new NotificationCompat.Builder(context, AppApplication.CHANNEL_ID)
                         .setSmallIcon(R.drawable.ic_notification)
                         .setContentTitle(title)
                         .setContentText(description)
-                        .setAutoCancel(true)
+                        .setAutoCancel(true) // notifikasi otomatis hilang sekali di-tap, tidak nongkrong terus
                         .setContentIntent(pendingIntent);
 
                 NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
                 notificationManager.notify(0, builder.build());
-                sendNotificationInApp(context, title, description, 10);
+                // DIHAPUS: sendNotificationInApp() -- method ini menampilkan Toast custom
+                // BERULANG 5 KALI selama 10 detik (repetitions = 10000ms / 2000ms = 5).
+                // Toast TIDAK butuh Activity untuk tampil, jadi dia muncul MENIMPA layar
+                // apapun yang lagi kebuka (home screen, dsb) walau app sudah ditutup total.
+                // Inilah penyebab "notifikasi terasa repeat" dan "ada teks nongol di luar app" --
+                // itu bukan reminder baru, itu 1 reminder yang SAMA nongol 5x berturut-turut.
+                // Notifikasi sistem (NotificationCompat di atas) sudah cukup dan sudah terbukti
+                // berhasil (muncul + bunyi), jadi toast tambahan ini dihapus total.
             } else {
                 Log.w("ReminderReceiver", "Null title or description received");
             }
@@ -50,35 +51,4 @@ public class ReminderReceiver extends BroadcastReceiver {
             Log.w("ReminderReceiver", "Unexpected or null intent action: " + (intent != null ? intent.getAction() : "null"));
         }
     }
-
-    private void sendNotificationInApp(Context context, String title, String message, int durationInSeconds) {
-        LayoutInflater inflater = LayoutInflater.from(context);
-        View layout = inflater.inflate(R.layout.custom_toast, null);
-
-        ImageView toastIcon = layout.findViewById(R.id.toast_icon);
-        TextView toastTitle = layout.findViewById(R.id.toast_title);
-        TextView toastText = layout.findViewById(R.id.toast_text);
-
-        toastIcon.setImageResource(R.drawable.ic_notification); // Set your desired icon here
-        toastTitle.setText(title);
-        toastText.setText(message);
-
-        Toast toast = new Toast(context);
-        toast.setDuration(Toast.LENGTH_LONG);
-        toast.setView(layout);
-        toast.setGravity(Gravity.TOP | Gravity.CENTER_HORIZONTAL, 0, 20);
-        toast.show();
-
-        int durationInMillis = durationInSeconds * 1000;
-        int toastLength = 2000; // LENGTH_SHORT duration in milliseconds
-        int repetitions = durationInMillis / toastLength;
-
-        Handler handler = new Handler();
-        for (int i = 0; i < repetitions; i++) {
-            handler.postDelayed(toast::show, i * toastLength);
-        }
-    }
-
-
 }
-

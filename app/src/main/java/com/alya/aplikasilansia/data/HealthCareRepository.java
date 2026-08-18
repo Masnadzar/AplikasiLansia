@@ -15,11 +15,11 @@ import java.util.List;
 
 public class HealthCareRepository {
     private FirebaseAuth mAuth;
-    private FirebaseFirestore db; // DIUBAH: dari DatabaseReference (RTDB) -> FirebaseFirestore
+    private FirebaseFirestore mFirestore;
 
     public HealthCareRepository() {
         mAuth = FirebaseAuth.getInstance();
-        db = FirebaseFirestore.getInstance(); // DIUBAH: FirebaseDatabase.getInstance().getReference()
+        mFirestore = FirebaseFirestore.getInstance();
     }
 
     public MutableLiveData<List<HealthCare>> fetchHealthCare() {
@@ -27,17 +27,15 @@ public class HealthCareRepository {
         FirebaseUser firebaseUser = mAuth.getCurrentUser();
 
         if (firebaseUser != null) {
-            // DIUBAH: mDatabase.child("health_center") -> collection("health_center")
-            // (top-level collection, sama seperti sebelumnya top-level node di RTDB)
-            db.collection("health_center")
-                    .get() // DIUBAH: addListenerForSingleValueEvent -> get()
+            mFirestore.collection("health_centers")
+                    .get()
                     .addOnSuccessListener(querySnapshot -> {
                         List<HealthCare> healthCareList = new ArrayList<>();
-                        for (QueryDocumentSnapshot doc : querySnapshot) {
-                            String name = doc.getString("name");
-                            String city = doc.getString("city");
-                            String address = doc.getString("address");
-                            String url = doc.getString("url");
+                        for (QueryDocumentSnapshot document : querySnapshot) {
+                            String name = document.getString("name");
+                            String city = document.getString("city");
+                            String address = document.getString("address");
+                            String url = document.getString("url");
 
                             HealthCare healthCare = new HealthCare(name, address, city, url);
                             healthCareList.add(healthCare);
@@ -45,7 +43,6 @@ public class HealthCareRepository {
                         healthCareLiveData.setValue(healthCareList);
                     })
                     .addOnFailureListener(e -> {
-                        // DIUBAH: onCancelled -> addOnFailureListener
                         Log.e("HealthCareRepository", "Firestore error", e);
                         healthCareLiveData.setValue(null);
                     });

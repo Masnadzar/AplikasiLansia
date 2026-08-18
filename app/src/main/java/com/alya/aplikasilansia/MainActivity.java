@@ -1,10 +1,16 @@
 package com.alya.aplikasilansia;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -16,6 +22,16 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 public class MainActivity extends AppCompatActivity {
 
     private ActivityMainBinding binding;
+
+    // Launcher untuk minta izin POST_NOTIFICATIONS (wajib Android 13+/API 33+).
+    // Tanpa izin ini, NotificationManager.notify() akan GAGAL DIAM-DIAM
+    // (tidak crash, tidak ada log error, notifikasi cuma tidak pernah muncul).
+    private final ActivityResultLauncher<String> notificationPermissionLauncher =
+            registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
+                // Tidak perlu aksi khusus di sini: kalau ditolak, reminder tetap tersimpan
+                // di Firestore dan tetap muncul di dalam app, hanya saja notifikasi
+                // di luar app tidak akan tampil sampai izin diberikan lewat Settings.
+            });
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +55,8 @@ public class MainActivity extends AppCompatActivity {
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(binding.navView, navController);
 
+        askNotificationPermission();
+
 //        FirebaseMessaging.getInstance().getToken().addOnCompleteListener(new OnCompleteListener<String>() {
 //            @Override
 //            public void onComplete(@NonNull Task<String> task) {
@@ -54,7 +72,18 @@ public class MainActivity extends AppCompatActivity {
 //            }
 //        });
     }
-//    private void saveTokenToServer(String token) {
+
+    private void askNotificationPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
+                    != PackageManager.PERMISSION_GRANTED) {
+                notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS);
+            }
+        }
+        // Di bawah Android 13, izin notifikasi otomatis diberikan saat install, tidak perlu diminta manual.
+    }
+
+    //    private void saveTokenToServer(String token) {
 //        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
 //        DatabaseReference database = FirebaseDatabase.getInstance().getReference();
 //        database.child("userTokens").child(userId).setValue(token);

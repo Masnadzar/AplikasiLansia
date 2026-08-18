@@ -10,21 +10,17 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class NewsRepository {
     private FirebaseAuth mAuth;
-    private FirebaseFirestore db; // DIUBAH: dari DatabaseReference (RTDB) -> FirebaseFirestore
-    private StorageReference mStorage; // Firebase Storage reference -> TIDAK BERUBAH
+    private FirebaseFirestore mFirestore;
 
     public NewsRepository() {
         mAuth = FirebaseAuth.getInstance();
-        db = FirebaseFirestore.getInstance(); // DIUBAH: FirebaseDatabase.getInstance().getReference()
-        mStorage = FirebaseStorage.getInstance().getReference("news_images"); // Storage reference
+        mFirestore = FirebaseFirestore.getInstance();
     }
 
     public MutableLiveData<List<News>> fetchAllNews() {
@@ -32,18 +28,17 @@ public class NewsRepository {
         FirebaseUser firebaseUser = mAuth.getCurrentUser();
 
         if (firebaseUser != null) {
-            // DIUBAH: mDatabase.child("news") -> collection("news")
-            db.collection("news")
-                    .get() // DIUBAH: addListenerForSingleValueEvent -> get()
+            mFirestore.collection("news")
+                    .get()
                     .addOnSuccessListener(querySnapshot -> {
                         List<News> newsList = new ArrayList<>();
-                        for (QueryDocumentSnapshot doc : querySnapshot) {
-                            String name = doc.getString("name");
-                            String date = doc.getString("date");
-                            String category = doc.getString("category");
-                            String source = doc.getString("source");
-                            String image = doc.getString("image");
-                            String newsContent = doc.getString("newsContent");
+                        for (QueryDocumentSnapshot document : querySnapshot) {
+                            String name = document.getString("name");
+                            String date = document.getString("date");
+                            String category = document.getString("category");
+                            String source = document.getString("source");
+                            String image = document.getString("image"); // nama field tetap "image", TIDAK di-rename
+                            String newsContent = document.getString("newsContent");
 
                             Uri newsImageUri = (image != null) ? Uri.parse(image) : null;
 
@@ -53,8 +48,7 @@ public class NewsRepository {
                         newsLiveData.setValue(newsList);
                     })
                     .addOnFailureListener(e -> {
-                        // DIUBAH: onCancelled -> addOnFailureListener
-                        Log.e("NewsRepository", "Firestore error: ", e);
+                        Log.e("NewsRepository", "Firestore error", e);
                         newsLiveData.setValue(null);
                     });
         }

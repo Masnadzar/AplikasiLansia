@@ -120,11 +120,15 @@ public class AddReminderActivity extends AppCompatActivity implements View.OnCli
 
         if (selectedIconResourceId != 0 && !title.isEmpty() && !selectedDay.isEmpty() && !selectedTime.isEmpty() && !desc.isEmpty()) {
             String timestamp = calculateTimestamp(selectedDay, selectedTime);
-            addReminderViewModel.createReminder(title, selectedDay, selectedTime, desc, timestamp, selectedIconResourceId);
-            Log.d("AddReminderActivity", "Attempting to schedule reminder");
-            ReminderScheduler.scheduleReminder(this, title, desc, timestamp);
-            Log.d("AddReminderActivity", "scheduleReminder should have been called");
-
+            // DIUBAH: scheduleReminder() sekarang dipanggil DI DALAM callback onCreated,
+            // setelah Firestore benar-benar selesai membuat dokumen dan reminderId sudah didapat.
+            // Sebelumnya scheduleReminder() dipanggil sebelum ID reminder diketahui, dan
+            // requestCode-nya di-hardcode 0 -> alarm antar reminder saling menimpa (lihat ReminderScheduler.java).
+            addReminderViewModel.createReminder(title, selectedDay, selectedTime, desc, timestamp, selectedIconResourceId,
+                    reminderId -> {
+                        Log.d("AddReminderActivity", "Reminder created with id=" + reminderId + ", scheduling notification");
+                        ReminderScheduler.scheduleReminder(AddReminderActivity.this, reminderId, title, desc, timestamp);
+                    });
         } else {
             incompleteFormDialog();
             Log.d("AddReminderActivity", "incomplete");

@@ -1,5 +1,7 @@
 package com.alya.aplikasilansia.data;
 
+import static android.content.ContentValues.TAG;
+
 import android.util.Log;
 
 import androidx.lifecycle.LiveData;
@@ -7,8 +9,9 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -23,12 +26,12 @@ import java.util.Map;
 
 public class BloodPresRepository {
     private FirebaseAuth mAuth;
-    private FirebaseFirestore db; // DIUBAH: dari DatabaseReference (RTDB) -> FirebaseFirestore
+    private FirebaseFirestore db;
     private final MutableLiveData<List<BloodPressure>> pressureLiveData;
 
     public BloodPresRepository() {
         mAuth = FirebaseAuth.getInstance();
-        db = FirebaseFirestore.getInstance(); // DIUBAH: FirebaseDatabase.getInstance().getReference()
+        db = FirebaseFirestore.getInstance();
         pressureLiveData = new MutableLiveData<>();
     }
 
@@ -37,58 +40,55 @@ public class BloodPresRepository {
 
         if (firebaseUser != null) {
             String userId = firebaseUser.getUid();
-
-            // DIUBAH: DatabaseReference("users").child(uid).child("bloodPressure")
-            //      -> subcollection: users/{uid}/bloodPressure
             db.collection("users").document(userId).collection("bloodPressure")
-                    .get() // DIUBAH: addListenerForSingleValueEvent -> get() (sekali ambil)
-                    .addOnSuccessListener(querySnapshot -> {
-                        List<BloodPressure> bPressure = new ArrayList<>();
-                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
-                        Date now = new Date();
+                    .get()
+                    .addOnCompleteListener(task -> {
+                        if (task.isSuccessful() && task.getResult() != null) {
+                            QuerySnapshot snapshot = task.getResult();
+                            List<BloodPressure> bPressure = new ArrayList<>();
+                            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+                            Date now = new Date();
 
-                        for (QueryDocumentSnapshot doc : querySnapshot) {
-                            String pres = doc.getString("pressure");
-                            String pulse = doc.getString("pulse");
-                            String date = doc.getString("date");
+                            for (DocumentSnapshot doc : snapshot.getDocuments()) {
+                                String pres = doc.getString("pressure");
+                                String pulse = doc.getString("pulse");
+                                String date = doc.getString("date");
 
-                            if (pres != null && pulse != null && date != null && !date.isEmpty()) {
-                                BloodPressure pressure = new BloodPressure(pres, pulse, date);
-                                bPressure.add(pressure);
+                                if (pres != null && pulse != null && date != null && !date.isEmpty()) {
+                                    BloodPressure pressure = new BloodPressure(pres, pulse, date);
+                                    bPressure.add(pressure);
+                                }
                             }
-                        }
-                        // Sort the list by date
-                        Collections.sort(bPressure, new Comparator<BloodPressure>() {
-                            @Override
-                            public int compare(BloodPressure o1, BloodPressure o2) {
-                                SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
-                                try {
-                                    Date date1 = dateFormat.parse(o1.getBpDate());
-                                    Date date2 = dateFormat.parse(o2.getBpDate());
-                                    if (date1 != null && date2 != null) {
-                                        return date2.compareTo(date1); // Latest first
+                            Collections.sort(bPressure, new Comparator<BloodPressure>() {
+                                @Override
+                                public int compare(BloodPressure o1, BloodPressure o2) {
+                                    SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+                                    try {
+                                        Date date1 = dateFormat.parse(o1.getBpDate());
+                                        Date date2 = dateFormat.parse(o2.getBpDate());
+                                        if (date1 != null && date2 != null) {
+                                            return date2.compareTo(date1);
+                                        }
+                                    } catch (ParseException e) {
+                                        e.printStackTrace();
                                     }
+                                    return 0;
+                                }
+                            });
+                            bPressure.removeIf(bpressure -> {
+                                try {
+                                    Date pressureDate = sdf.parse(bpressure.getBpDate());
+                                    return pressureDate.before(now);
                                 } catch (ParseException e) {
                                     e.printStackTrace();
+                                    return false;
                                 }
-                                return 0;
-                            }
-                        });
-                        bPressure.removeIf(bpressure -> {
-                            try {
-                                Date pressureDate = sdf.parse(bpressure.getBpDate());
-                                return pressureDate.before(now);
-                            } catch (ParseException e) {
-                                e.printStackTrace();
-                                return false;
-                            }
-                        });
-                        pressureLiveData.setValue(bPressure);
-                    })
-                    .addOnFailureListener(e -> {
-                        // DIUBAH: onCancelled -> addOnFailureListener
-                        Log.e("BloodPresRepository", "Firestore error: ", e);
-                        pressureLiveData.setValue(null);
+                            });
+                            pressureLiveData.setValue(bPressure);
+                        } else {
+                            Log.e("BloodPresRepository", "Firestore error: ", task.getException());
+                            pressureLiveData.setValue(null);
+                        }
                     });
         } else {
             pressureLiveData.setValue(null);
@@ -101,49 +101,42 @@ public class BloodPresRepository {
         MutableLiveData<BloodPressure> latestBloodPressureLiveData = new MutableLiveData<>();
         FirebaseUser firebaseUser = mAuth.getCurrentUser();
         if (firebaseUser == null) {
-            latestBloodPressureLiveData.setValue(null); // User not authenticated
+            latestBloodPressureLiveData.setValue(null);
             return latestBloodPressureLiveData;
         } else {
             String userId = firebaseUser.getUid();
-
-            // DIUBAH: addValueEventListener (realtime RTDB) -> addSnapshotListener (realtime Firestore)
             db.collection("users").document(userId).collection("bloodPressure")
-                    .addSnapshotListener((querySnapshot, error) -> {
+                    .addSnapshotListener((snapshot, error) -> {
                         if (error != null) {
-                            // DIUBAH: onCancelled -> callback error di addSnapshotListener
-                            Log.e("BloodPresRepository", "Database error", error);
+                            Log.e("BloodPresRepository", "Firestore error", error);
                             return;
                         }
-                        if (querySnapshot == null) return;
+                        if (snapshot == null) return;
 
                         List<BloodPressure> bloodPressureList = new ArrayList<>();
-                        for (QueryDocumentSnapshot ds : querySnapshot) {
-                            String pres = ds.getString("pressure");
-                            String pulse = ds.getString("pulse");
-                            String date = ds.getString("date");
+                        for (DocumentSnapshot doc : snapshot.getDocuments()) {
+                            String pres = doc.getString("pressure");
+                            String pulse = doc.getString("pulse");
+                            String date = doc.getString("date");
 
                             if (pres != null && pulse != null && date != null && !date.isEmpty()) {
                                 BloodPressure pressure = new BloodPressure(pres, pulse, date);
                                 bloodPressureList.add(pressure);
                             }
                         }
-                        // Sort the list by date in descending order
                         bloodPressureList.sort((bp1, bp2) -> {
                             SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
-
                             String date1Str = bp1.getBpDate();
                             String date2Str = bp2.getBpDate();
 
                             if (date1Str == null || date2Str == null) {
-                                Log.e("BloodPresRepository", "One or both dates are null. Date1: " + date1Str + ", Date2: " + date2Str);
                                 return 0;
                             } else {
                                 try {
                                     Date date1 = dateFormat.parse(date1Str);
                                     Date date2 = dateFormat.parse(date2Str);
-
                                     if (date1 != null && date2 != null) {
-                                        return date2.compareTo(date1); // Latest first
+                                        return date2.compareTo(date1);
                                     }
                                 } catch (ParseException e) {
                                     Log.e("BloodPresRepository", "Date parse error", e);
@@ -151,7 +144,7 @@ public class BloodPresRepository {
                                 return 0;
                             }
                         });
-                        // Set the most recent BloodPressure as the value
+
                         if (!bloodPressureList.isEmpty()) {
                             latestBloodPressureLiveData.setValue(bloodPressureList.get(0));
                         } else {
@@ -170,15 +163,13 @@ public class BloodPresRepository {
         FirebaseUser firebaseUser = mAuth.getCurrentUser();
         if (firebaseUser != null) {
             String userId = firebaseUser.getUid();
-            Log.d("BloodPresRepository", "User ID: " + userId);
+            Log.d(TAG, "User ID: " + userId);
 
             Map<String, Object> data = new HashMap<>();
             data.put("pressure", bloodPressure);
             data.put("pulse", pulse);
             data.put("date", timestamp);
 
-            // DIUBAH: DatabaseReference.push().setValue(data) -> collection.add(data)
-            // .add() otomatis generate document ID baru, setara dengan .push() di RTDB
             db.collection("users").document(userId).collection("bloodPressure")
                     .add(data)
                     .addOnSuccessListener(docRef -> {

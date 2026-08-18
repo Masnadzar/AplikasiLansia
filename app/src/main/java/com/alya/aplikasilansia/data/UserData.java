@@ -1,9 +1,7 @@
 package com.alya.aplikasilansia.data;
 
-import java.util.ArrayList;
-import java.util.HashMap;
+import android.net.Uri;
 import java.util.List;
-import java.util.Map;
 
 public class UserData {
     private static UserData instance;
@@ -14,7 +12,7 @@ public class UserData {
     private String gender;
     private String caregiver;
     private String maritalStatus;
-    private String profileImageUrl; // Firestore stores this as a String (download URL), not a Uri
+    private Uri profileImageUrl; // Added profileImageUrl field
     private List<inputMedHistory> medHistory; // Assuming you need this as well
 
     private UserData() {}
@@ -84,11 +82,11 @@ public class UserData {
         this.maritalStatus = maritalStatus;
     }
 
-    public String getProfileImageUrl() {
+    public Uri getProfileImageUrl() {
         return profileImageUrl;
     }
 
-    public void setProfileImageUrl(String profileImageUrl) {
+    public void setProfileImageUrl(Uri profileImageUrl) {
         this.profileImageUrl = profileImageUrl;
     }
 
@@ -98,81 +96,5 @@ public class UserData {
 
     public void setMedHistory(List<inputMedHistory> medHistory) {
         this.medHistory = medHistory;
-    }
-
-    /**
-     * Mengubah data user menjadi Map agar bisa langsung disimpan
-     * ke dokumen Firestore, misalnya:
-     * firestore.collection("users").document(uid).set(userData.toMap());
-     * Field "password" sengaja tidak disertakan karena tidak boleh disimpan
-     * di Firestore (password sudah dikelola oleh Firebase Authentication).
-     */
-    public Map<String, Object> toMap() {
-        Map<String, Object> map = new HashMap<>();
-        map.put("email", email);
-        map.put("birthDate", birthDate);
-        map.put("userName", userName);
-        map.put("gender", gender);
-        map.put("caregiver", caregiver);
-        map.put("maritalStatus", maritalStatus);
-        map.put("profileImageUrl", profileImageUrl);
-
-        List<Map<String, Object>> medHistoryMaps = new ArrayList<>();
-        if (medHistory != null) {
-            for (inputMedHistory item : medHistory) {
-                if (item != null) {
-                    Map<String, Object> itemMap = new HashMap<>();
-                    itemMap.put("penyakit", item.getPenyakit());
-                    itemMap.put("lamanya", item.getLamanya());
-                    itemMap.put("lamanyaBulan", item.getLamanyaBulan());
-                    medHistoryMaps.add(itemMap);
-                }
-            }
-        }
-        map.put("medHistory", medHistoryMaps);
-
-        return map;
-    }
-
-    /**
-     * Mengisi ulang instance UserData dari sebuah dokumen Firestore, misalnya:
-     * userData.fromMap(documentSnapshot.getData());
-     */
-    @SuppressWarnings("unchecked")
-    public void fromMap(Map<String, Object> map) {
-        if (map == null) return;
-
-        this.email = (String) map.get("email");
-        this.birthDate = (String) map.get("birthDate");
-        this.userName = (String) map.get("userName");
-        this.gender = (String) map.get("gender");
-        this.caregiver = (String) map.get("caregiver");
-        this.maritalStatus = (String) map.get("maritalStatus");
-        this.profileImageUrl = (String) map.get("profileImageUrl");
-
-        List<inputMedHistory> parsedMedHistory = new ArrayList<>();
-        Object rawMedHistory = map.get("medHistory");
-        if (rawMedHistory instanceof List) {
-            for (Object rawItem : (List<Object>) rawMedHistory) {
-                if (rawItem instanceof Map) {
-                    Map<String, Object> itemMap = (Map<String, Object>) rawItem;
-                    inputMedHistory item = new inputMedHistory();
-                    item.setPenyakit((String) itemMap.get("penyakit"));
-                    item.setLamanya((String) itemMap.get("lamanya"));
-                    item.setLamanyaBulan((String) itemMap.get("lamanyaBulan"));
-                    parsedMedHistory.add(item);
-                }
-            }
-        }
-        this.medHistory = parsedMedHistory;
-    }
-
-    /**
-     * Membersihkan data singleton, dipanggil setelah proses registrasi
-     * selesai (berhasil disimpan ke Firestore) supaya data lama tidak
-     * tertinggal untuk sesi registrasi berikutnya.
-     */
-    public static synchronized void reset() {
-        instance = null;
     }
 }

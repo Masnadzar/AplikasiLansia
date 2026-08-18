@@ -1,6 +1,7 @@
 package com.alya.aplikasilansia;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -31,7 +32,7 @@ public class RegisterStep3Activity extends AppCompatActivity {
     private RegisterViewModel registerViewModel;
     private List<inputMedHistory> medHistory;
     private String careGiver, maritalStat;
-    private String profileImageUrl;
+    private Uri profileImageUrl;
     private Spinner spinnerCareGiver, spinnerMaritalStatus;
     private Button btnSaveMedData;
 

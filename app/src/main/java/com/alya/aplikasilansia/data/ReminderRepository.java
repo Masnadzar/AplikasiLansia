@@ -78,7 +78,14 @@ public class ReminderRepository {
         return reminderLiveData;
     }
 
-    public void createReminder(String title, String day, String time, String desc, String timestamp, Integer icon, MutableLiveData<FirebaseUser> reminderLiveData, MutableLiveData<String> errorLiveData) {
+    public interface OnReminderCreatedCallback {
+        void onCreated(String reminderId);
+    }
+
+    // DIUBAH: tambah parameter callback OnReminderCreatedCallback supaya caller (AddReminderActivity)
+    // bisa dapat reminderId yang di-generate Firestore -> dipakai sebagai requestCode unik
+    // di ReminderScheduler. Sebelumnya scheduleReminder() dipanggil tanpa tahu ID sama sekali.
+    public void createReminder(String title, String day, String time, String desc, String timestamp, Integer icon, MutableLiveData<FirebaseUser> reminderLiveData, MutableLiveData<String> errorLiveData, OnReminderCreatedCallback onCreatedCallback) {
         FirebaseUser firebaseUser = mAuth.getCurrentUser();
         if (firebaseUser != null) {
             String userId = firebaseUser.getUid();
@@ -91,8 +98,11 @@ public class ReminderRepository {
             db.collection("users").document(userId).collection("reminders")
                     .add(reminder)
                     .addOnSuccessListener(docRef -> {
-                        Log.d("ReminderRepository", "Reminder added successfully");
+                        Log.d("ReminderRepository", "Reminder added successfully, id=" + docRef.getId());
                         reminderLiveData.postValue(firebaseUser);
+                        if (onCreatedCallback != null) {
+                            onCreatedCallback.onCreated(docRef.getId()); // BARU: kirim balik ID dokumen
+                        }
                     })
                     .addOnFailureListener(e -> {
                         Log.e("ReminderRepository", "Failed to add reminder: " + e.getMessage());
