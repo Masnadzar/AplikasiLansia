@@ -18,8 +18,13 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.alya.aplikasilansia.LoginActivity;
 import com.alya.aplikasilansia.R;
+import com.alya.aplikasilansia.data.BloodPresRepository;
+import com.alya.aplikasilansia.data.BloodPressure;
+import com.alya.aplikasilansia.data.QuizHistoryItem;
+import com.alya.aplikasilansia.data.QuizRepository;
 import com.alya.aplikasilansia.data.User;
 import com.alya.aplikasilansia.data.inputMedHistory;
+import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.List;
 import java.util.Objects;
@@ -28,7 +33,13 @@ import java.util.Objects;
 public class ProfileHealthFragment extends Fragment {
     private LinearLayout profileMedHistory;
     private TextView tvCaregiver, tvMaritalStatus;
+    // BARU: dipakai untuk menampilkan hasil screening & tekanan darah terakhir
+    private TextView tvQuizScore, tvQuizDate, tvBpValue, tvBpDate;
     private ProfileViewModel profileViewModel;
+    // BARU: repository terpisah, dipakai langsung (bukan lewat ViewModel Fragment ini)
+    // supaya tidak perlu bikin ViewModel baru cuma untuk 2 field ringkasan ini
+    private QuizRepository quizRepository;
+    private BloodPresRepository bloodPresRepository;
     private Button signOut;
 
     public ProfileHealthFragment() {
@@ -49,15 +60,63 @@ public class ProfileHealthFragment extends Fragment {
         profileMedHistory = view.findViewById(R.id.profile_medhistory);
         tvCaregiver = view.findViewById(R.id.tv_caregiver);
         tvMaritalStatus = view.findViewById(R.id.tv_marital_stat);
+        // BARU: bind 4 TextView hasil screening & tensi -- sebelumnya tidak pernah
+        // di-findViewById() sama sekali, makanya box-nya cuma nampilin placeholder
+        // "Belum ada data tes" / "Belum ada data tensi" terus-menerus walau datanya ada.
+        tvQuizScore = view.findViewById(R.id.tv_quiz_score);
+        tvQuizDate = view.findViewById(R.id.tv_quiz_date);
+        tvBpValue = view.findViewById(R.id.tv_bp_value);
+        tvBpDate = view.findViewById(R.id.tv_bp_date);
         signOut = view.findViewById(R.id.btn_sign_out_2);
+
+        quizRepository = new QuizRepository();
+        bloodPresRepository = new BloodPresRepository();
 
         signOut.setOnClickListener(v -> {
             showLogoutDialog();
         });
 
         getData();
+        getLatestQuizScore(); // BARU
+        getLatestBloodPressure(); // BARU
         return view;
 
+    }
+
+    // BARU: ambil 1 hasil tes GDS (skrining depresi) yang paling baru, lalu tampilkan
+    // ke tv_quiz_score & tv_quiz_date. Kalau belum pernah tes sama sekali, placeholder
+    // bawaan di layout XML ("Belum ada data tes") otomatis tetap yang tampil.
+    private void getLatestQuizScore() {
+        String userId = FirebaseAuth.getInstance().getUid();
+        if (userId == null) {
+            return;
+        }
+        quizRepository.fetchQuizHistory(userId);
+        quizRepository.getQuizHistoryLiveData().observe(getViewLifecycleOwner(), new Observer<List<QuizHistoryItem>>() {
+            @Override
+            public void onChanged(List<QuizHistoryItem> quizHistoryItems) {
+                if (quizHistoryItems != null && !quizHistoryItems.isEmpty()) {
+                    // Sudah diurutkan terbaru-dulu di QuizRepository, jadi index 0 = paling baru
+                    QuizHistoryItem latest = quizHistoryItems.get(0);
+                    tvQuizScore.setText(latest.getTotalScore() + " - " + latest.getClassifiedScore());
+                    tvQuizDate.setText(latest.getDate());
+                }
+            }
+        });
+    }
+
+    // BARU: ambil 1 data tensi darah yang paling baru, lalu tampilkan
+    // ke tv_bp_value & tv_bp_date.
+    private void getLatestBloodPressure() {
+        bloodPresRepository.getLatestBloodPressure().observe(getViewLifecycleOwner(), new Observer<BloodPressure>() {
+            @Override
+            public void onChanged(BloodPressure bloodPressure) {
+                if (bloodPressure != null) {
+                    tvBpValue.setText(bloodPressure.getBloodPressure() + " mmHg, Nadi " + bloodPressure.getPulse() + " bpm");
+                    tvBpDate.setText(bloodPressure.getBpDate());
+                }
+            }
+        });
     }
 
     public void showLogoutDialog() {
@@ -119,6 +178,8 @@ public class ProfileHealthFragment extends Fragment {
         super.onResume();
         profileViewModel.fetchUser();
         getData();
+        getLatestQuizScore(); // BARU: refresh setiap kali fragment ini dibuka lagi
+        getLatestBloodPressure(); // BARU
         if (profileMedHistory != null) {
             profileMedHistory.post(() -> {
                 profileMedHistory.scrollTo(0, 0);
