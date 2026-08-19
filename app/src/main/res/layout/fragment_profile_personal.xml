@@ -151,6 +151,20 @@
             app:icon="@drawable/ic_logout"
             app:iconPadding="9dp"
             app:iconGravity="textStart"/>
+
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_hapus_akun"
+            style="@style/CustomDangerButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/hapus_akun"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="15dp"
+            app:icon="@drawable/ic_delete"
+            app:iconPadding="9dp"
+            app:iconGravity="textStart"/>
     </LinearLayout>
 
 </ScrollView>

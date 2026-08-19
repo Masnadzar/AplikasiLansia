@@ -1,6 +1,5 @@
 package com.alya.aplikasilansia.ui.profile;
 
-import com.alya.aplikasilansia.data.QuizHistoryItem;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -31,7 +30,6 @@ public class ProfileHealthFragment extends Fragment {
     private TextView tvCaregiver, tvMaritalStatus;
     private ProfileViewModel profileViewModel;
     private Button signOut;
-    private TextView tvQuizScore, tvQuizDate, tvBpValue, tvBpDate;
 
     public ProfileHealthFragment() {
         // Required empty public constructor
@@ -52,46 +50,16 @@ public class ProfileHealthFragment extends Fragment {
         tvCaregiver = view.findViewById(R.id.tv_caregiver);
         tvMaritalStatus = view.findViewById(R.id.tv_marital_stat);
         signOut = view.findViewById(R.id.btn_sign_out_2);
-        tvQuizScore = view.findViewById(R.id.tv_quiz_score);
-        tvQuizDate = view.findViewById(R.id.tv_quiz_date);
-        tvBpValue = view.findViewById(R.id.tv_bp_value);
-        tvBpDate = view.findViewById(R.id.tv_bp_date);
-
 
         signOut.setOnClickListener(v -> {
             showLogoutDialog();
         });
 
         getData();
-        loadScreeningAndBp();
         return view;
 
     }
 
-    private void loadScreeningAndBp() {
-        // Skor screening terbaru
-        profileViewModel.getQuizHistory().observe(getViewLifecycleOwner(), quizList -> {
-            if (quizList != null && !quizList.isEmpty()) {
-                QuizHistoryItem latest = quizList.get(0); // sudah diurutkan terbaru dulu di QuizRepository
-                tvQuizScore.setText("Skor " + latest.getTotalScore() + " - " + latest.getClassifiedScore());
-                tvQuizDate.setText(latest.getDate());
-            } else {
-                tvQuizScore.setText("Belum ada data tes");
-                tvQuizDate.setText("");
-            }
-        });
-
-        // Tekanan darah terbaru
-        profileViewModel.getLatestBloodPressure().observe(getViewLifecycleOwner(), bp -> {
-            if (bp != null) {
-                tvBpValue.setText(bp.getBloodPressure() + " mmHg  •  Nadi " + bp.getPulse() + " bpm");
-                tvBpDate.setText(bp.getBpDate());
-            } else {
-                tvBpValue.setText("Belum ada data tensi");
-                tvBpDate.setText("");
-            }
-        });
-    }
     public void showLogoutDialog() {
         LayoutInflater inflater = requireActivity().getLayoutInflater();
         View dialogView = inflater.inflate(R.layout.confirm_logout_dialog, null);

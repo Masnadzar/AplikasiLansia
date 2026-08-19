@@ -5,7 +5,7 @@ import android.util.Log;
 
 import androidx.lifecycle.MutableLiveData;
 
-import com.alya.aplikasilansia.ui.news.News;
+import com.alya.aplikasilansia.ui.berita.Tips;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -14,46 +14,45 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import java.util.ArrayList;
 import java.util.List;
 
-public class NewsRepository {
+public class TipsRepository {
     private FirebaseAuth mAuth;
     private FirebaseFirestore mFirestore;
 
-    public NewsRepository() {
+    public TipsRepository() {
         mAuth = FirebaseAuth.getInstance();
         mFirestore = FirebaseFirestore.getInstance();
     }
 
-    public MutableLiveData<List<News>> fetchAllNews() {
-        MutableLiveData<List<News>> newsLiveData = new MutableLiveData<>();
+    public MutableLiveData<List<Tips>> fetchAllTips() {
+        MutableLiveData<List<Tips>> tipsLiveData = new MutableLiveData<>();
         FirebaseUser firebaseUser = mAuth.getCurrentUser();
 
         if (firebaseUser != null) {
-            mFirestore.collection("news")
+            mFirestore.collection("tips")
                     .get()
                     .addOnSuccessListener(querySnapshot -> {
-                        List<News> newsList = new ArrayList<>();
+                        List<Tips> tipsList = new ArrayList<>();
                         for (QueryDocumentSnapshot document : querySnapshot) {
-                            String name = document.getString("name");
+                            String title = document.getString("title");
                             String date = document.getString("date");
                             String category = document.getString("category");
-                            String source = document.getString("source");
+                            String content = document.getString("content");
                             String image = document.getString("image");
-                            String newsContent = document.getString("newsContent");
 
-                            Uri newsImageUri = (image != null) ? Uri.parse(image) : null;
+                            Uri tipsImageUri = (image != null && !image.isEmpty()) ? Uri.parse(image) : null;
 
-                            News news = new News(name, date, category, source, newsImageUri, newsContent);
-                            newsList.add(news);
+                            Tips tips = new Tips(title, date, category, content, tipsImageUri);
+                            tipsList.add(tips);
                         }
-                        newsLiveData.setValue(newsList);
+                        tipsLiveData.setValue(tipsList);
                     })
                     .addOnFailureListener(e -> {
-                        Log.e("NewsRepository", "Firestore error", e);
-                        newsLiveData.setValue(null);
+                        Log.e("TipsRepository", "Firestore error", e);
+                        tipsLiveData.setValue(null);
                     });
         } else {
-            newsLiveData.setValue(new ArrayList<>());
+            tipsLiveData.setValue(new ArrayList<>());
         }
-        return newsLiveData;
+        return tipsLiveData;
     }
 }

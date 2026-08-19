@@ -19,9 +19,9 @@
 
     <fragment
         android:id="@+id/navigation_news"
-        android:name="com.alya.aplikasilansia.ui.news.NewsFragment"
+        android:name="com.alya.aplikasilansia.ui.berita.BeritaFragment"
         android:label="@string/title_news"
-        tools:layout="@layout/fragment_news" />
+        tools:layout="@layout/fragment_berita" />
 
     <fragment
         android:id="@+id/navigation_profile"

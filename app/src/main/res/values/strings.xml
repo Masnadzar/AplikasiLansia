@@ -232,8 +232,16 @@
         <item>Cerai Mati</item>
     </string-array>
 
-<!--    <resources>-->
-        <string name="server_client_id" translatable="false">256979860495-s2pdt23dusmndfv8rkoleu5jeinjeqrd.apps.googleusercontent.com</string>
-<!--    </resources>-->
+    <!--    <resources>-->
+    <string name="server_client_id" translatable="false">256979860495-s2pdt23dusmndfv8rkoleu5jeinjeqrd.apps.googleusercontent.com</string>
+    <!--    </resources>-->
+
+    <!--
+        String untuk fitur Hapus Akun.
+    -->
+    <string name="hapus_akun">Hapus Akun</string>
+    <string name="hapus_akun_konfirmasi_judul">Hapus Akun?</string>
+    <string name="hapus_akun_konfirmasi_pesan">Semua data Anda (profil, riwayat kesehatan, quiz, pengingat) akan dihapus secara permanen dan tidak bisa dikembalikan. Yakin ingin melanjutkan?</string>
+    <string name="ya_hapus_akun">Ya, Hapus Akun Saya</string>
 
 </resources>

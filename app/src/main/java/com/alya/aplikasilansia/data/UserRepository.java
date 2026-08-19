@@ -10,6 +10,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseAuthInvalidUserException;
+import com.google.firebase.auth.FirebaseAuthRecentLoginRequiredException;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -48,7 +49,6 @@ public class UserRepository {
                             String caregiver = snapshot.getString("caregiver");
                             String maritalStatus = snapshot.getString("maritalStatus");
 
-                            // Retrieve medHistory as a List<inputMedHistory>
                             List<inputMedHistory> medHistory = new ArrayList<>();
                             List<Map<String, Object>> rawMedHistory =
                                     (List<Map<String, Object>>) snapshot.get("medHistory");
@@ -62,7 +62,6 @@ public class UserRepository {
                                 }
                             }
 
-                            // Convert string imageUrl to Uri
                             Uri profileImageUri = (imageUrl != null) ? Uri.parse(imageUrl) : null;
 
                             User userProfile = new User(firebaseUser.getEmail(), birthDate, userName, gender, profileImageUri, caregiver, maritalStatus, medHistory);
@@ -73,7 +72,7 @@ public class UserRepository {
                     })
                     .addOnFailureListener(e -> {
                         Log.e("UserRepository", "Firestore error: ", e);
-                        userLiveData.setValue(null); // Optionally set the value to null to indicate a failure
+                        userLiveData.setValue(null);
                     });
         }
 
@@ -104,14 +103,13 @@ public class UserRepository {
                     account.getEmail(),
                     birthDate,
                     account.getDisplayName(),
-                    null, // Gender can be fetched from your UI if needed
+                    null,
                     null,
                     null,
                     null,
                     null
             );
 
-            // Save the user data to Firestore
             mFirestore.collection("users").document(user.getUid())
                     .set(additionalUserInfo)
                     .addOnCompleteListener(task -> {
@@ -152,6 +150,69 @@ public class UserRepository {
         mAuth.signOut();
     }
 
+    /**
+     * Menghapus akun pengguna secara permanen: menghapus subcollection
+     * (quizResults, bloodPressure, reminders), dokumen users/{uid}, foto profil
+     * di Storage, lalu akun di Firebase Authentication.
+     *
+     * Jika sesi login sudah tidak "recent", Firebase akan menolak firebaseUser.delete()
+     * dengan FirebaseAuthRecentLoginRequiredException. Di kasus ini, deleteResultLiveData
+     * akan diisi string "RECENT_LOGIN_REQUIRED" -- UI harus menangkap nilai ini dan meminta
+     * user re-login (email/password atau Google Sign-In ulang) sebelum memanggil
+     * deleteAccount() lagi.
+     */
+    public void deleteAccount(MutableLiveData<String> deleteResultLiveData) {
+        FirebaseUser firebaseUser = mAuth.getCurrentUser();
+
+        if (firebaseUser == null) {
+            deleteResultLiveData.postValue("User not authenticated");
+            return;
+        }
+
+        String uid = firebaseUser.getUid();
+
+        deleteSubcollection(uid, "quizResults", () ->
+                deleteSubcollection(uid, "bloodPressure", () ->
+                        deleteSubcollection(uid, "reminders", () -> {
+
+                            mFirestore.collection("users").document(uid)
+                                    .delete()
+                                    .addOnSuccessListener(aVoid ->
+                                            mStorage.child(uid + ".jpg").delete()
+                                                    .addOnCompleteListener(storageTask ->
+                                                            deleteFirebaseAuthAccount(firebaseUser, deleteResultLiveData)))
+                                    .addOnFailureListener(e ->
+                                            deleteResultLiveData.postValue("Failed to delete user data: " + e.getMessage()));
+                        })));
+    }
+
+    private void deleteSubcollection(String uid, String subcollectionName, Runnable onComplete) {
+        mFirestore.collection("users").document(uid).collection(subcollectionName)
+                .get()
+                .addOnSuccessListener(querySnapshot -> {
+                    for (DocumentSnapshot doc : querySnapshot.getDocuments()) {
+                        doc.getReference().delete();
+                    }
+                    onComplete.run();
+                })
+                .addOnFailureListener(e -> {
+                    Log.e("UserRepository", "Failed to delete subcollection " + subcollectionName + ": " + e.getMessage());
+                    onComplete.run(); // tetap lanjut walau gagal, jangan blokir proses hapus akun
+                });
+    }
+
+    private void deleteFirebaseAuthAccount(FirebaseUser firebaseUser, MutableLiveData<String> deleteResultLiveData) {
+        firebaseUser.delete()
+                .addOnSuccessListener(aVoid -> deleteResultLiveData.postValue("Account deleted successfully"))
+                .addOnFailureListener(e -> {
+                    if (e instanceof FirebaseAuthRecentLoginRequiredException) {
+                        deleteResultLiveData.postValue("RECENT_LOGIN_REQUIRED");
+                    } else {
+                        deleteResultLiveData.postValue("Failed to delete account: " + e.getMessage());
+                    }
+                });
+    }
+
     public void updateProfile(String newUserName, String email, String birthDate, Uri profileImageUri, MutableLiveData<String> updateResultLiveData) {
         FirebaseUser firebaseUser = mAuth.getCurrentUser();
 
@@ -161,11 +222,9 @@ public class UserRepository {
             if (email != null) updates.put("email", email);
             if (birthDate != null) updates.put("birthDate", birthDate);
 
-            // Update profile in Firestore
             mFirestore.collection("users").document(firebaseUser.getUid())
                     .update(updates)
                     .addOnSuccessListener(aVoid -> {
-                        // Upload profile image if URI provided
                         if (profileImageUri != null) {
                             uploadProfileImage(profileImageUri, firebaseUser.getUid(), updateResultLiveData);
                         } else {
@@ -173,22 +232,19 @@ public class UserRepository {
                         }
                     })
                     .addOnFailureListener(e -> {
-                        // Handle failure
                         updateResultLiveData.postValue("Failed to update profile: " + e.getMessage());
                     });
         }
     }
 
-    // Method to upload profile image to Firebase Storage (tidak berubah)
     private void uploadProfileImage(Uri imageUri, String userId, MutableLiveData<String> imageUrlLiveData) {
-        StorageReference profileImageRef = mStorage.child(userId + ".jpg"); // Adjust filename as needed
+        StorageReference profileImageRef = mStorage.child(userId + ".jpg");
 
         profileImageRef.putFile(imageUri)
                 .addOnSuccessListener(taskSnapshot -> {
                     profileImageRef.getDownloadUrl().addOnSuccessListener(uri -> {
                         String imageUrl = uri.toString();
 
-                        // Update profile image URL in Firestore
                         mFirestore.collection("users").document(userId)
                                 .update("profileImageUrl", imageUrl)
                                 .addOnSuccessListener(aVoid -> imageUrlLiveData.postValue(imageUrl))
@@ -196,7 +252,6 @@ public class UserRepository {
                     });
                 })
                 .addOnFailureListener(e -> {
-                    // Handle image upload failure
                     Log.e("UserRepository", "Failed to upload profile image: " + e.getMessage());
                 });
     }
