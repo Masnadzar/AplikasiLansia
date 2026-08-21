@@ -3,6 +3,8 @@ package com.alya.aplikasilansia.ui.editprofile;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.Gravity;
@@ -15,6 +17,7 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
@@ -24,7 +27,13 @@ import com.alya.aplikasilansia.data.inputMedHistory;
 import com.bumptech.glide.Glide;
 import com.google.android.material.snackbar.Snackbar;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class EditProfileActivity extends AppCompatActivity implements OnSaveEditListener{
 
@@ -35,6 +44,10 @@ public class EditProfileActivity extends AppCompatActivity implements OnSaveEdit
     private TextView personalProfile, healthProfile, userNameTextView;
     private RelativeLayout editProfileImg;
     String fragmentType;
+
+    // BARU: dipakai untuk menyalin file di background thread, supaya tidak nge-block UI
+    private final ExecutorService executorService = Executors.newSingleThreadExecutor();
+    private final Handler mainHandler = new Handler(Looper.getMainLooper());
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,7 +97,9 @@ public class EditProfileActivity extends AppCompatActivity implements OnSaveEdit
         });
 
         editProfileViewModel.getUpdateResultLiveData().observe(this, updateResult -> {
-            if (updateResult.equals("Profile updated successfully")) {
+            // DIUBAH: "updateResult.equals(...)" -> "\"...\".equals(updateResult)"
+            // Urutan dibalik supaya tidak NullPointerException kalau updateResult ternyata null.
+            if ("Profile updated successfully".equals(updateResult)) {
                 dataSavedDialog();
                 finish();
             } else {
@@ -131,8 +146,15 @@ public class EditProfileActivity extends AppCompatActivity implements OnSaveEdit
     }
 
     private void saveProfileChanges() {
+        // DIHAPUS: finish() yang sebelumnya dipanggil LANGSUNG di sini, tanpa nunggu
+        // updateProfile() (Firestore + upload Cloudinary) selesai. Ini penyebab utama
+        // "foto tidak tersimpan": Activity ditutup duluan sebelum proses upload beres,
+        // kadang bikin proses upload di-background KEPUTUS di tengah jalan (app terasa
+        // "keluar" padahal sebenarnya Activity finish lebih cepat dari yang seharusnya).
+        // Sekarang cukup panggil updateProfile() saja -- observer updateResultLiveData
+        // di onCreate() yang SATU-SATUNYA bertanggung jawab memanggil finish(),
+        // dan itu baru terjadi SETELAH proses benar-benar selesai (berhasil/gagal).
         editProfileViewModel.updateProfile(null, null, null, selectedImageUri);
-        finish();
     }
 
     private void openGallery() {
@@ -144,10 +166,64 @@ public class EditProfileActivity extends AppCompatActivity implements OnSaveEdit
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_PICK_IMAGE && resultCode == RESULT_OK && data != null) {
-            selectedImageUri = data.getData();
-            imageViewProfile.setImageURI(selectedImageUri);
-            Log.d("EditProfileActivity", "Selected image URI: " + selectedImageUri.toString());
+            Uri pickedUri = data.getData();
+            if (pickedUri == null) return;
+
+            Log.d("EditProfileActivity", "Picked image URI: " + pickedUri);
+
+            // DIUBAH: URI hasil pilih (terutama dari Google Photos) cuma dapat izin baca
+            // SEMENTARA, hanya valid selagi Activity ini masih hidup. Cloudinary upload lewat
+            // WorkManager (proses BACKGROUND, bisa jalan belakangan/lintas restart app) --
+            // begitu WorkManager baru baca file-nya nanti, izin tadi sudah keburu hangus ->
+            // SecurityException: Permission Denial (persis error yang dilaporkan).
+            // Solusi: SALIN isi file ke penyimpanan lokal app SAAT INI JUGA (selagi izin
+            // masih valid), lalu upload file lokal itu -- bukan URI Google Photos aslinya.
+            copyToLocalFileAndPreview(pickedUri);
         }
+    }
+
+    private void copyToLocalFileAndPreview(Uri sourceUri) {
+        executorService.execute(() -> {
+            try {
+                InputStream inputStream = getContentResolver().openInputStream(sourceUri);
+                if (inputStream == null) {
+                    Log.e("EditProfileActivity", "Failed to open input stream for " + sourceUri);
+                    return;
+                }
+
+                File localFile = new File(getCacheDir(), "profile_image_" + System.currentTimeMillis() + ".jpg");
+                try (FileOutputStream outputStream = new FileOutputStream(localFile)) {
+                    byte[] buffer = new byte[8192];
+                    int bytesRead;
+                    while ((bytesRead = inputStream.read(buffer)) != -1) {
+                        outputStream.write(buffer, 0, bytesRead);
+                    }
+                }
+                inputStream.close();
+
+                Uri localUri = Uri.fromFile(localFile);
+                Log.d("EditProfileActivity", "Copied to local file: " + localUri);
+
+                // Balik ke main thread untuk update UI & simpan referensi URI lokal
+                mainHandler.post(() -> {
+                    selectedImageUri = localUri; // DIUBAH: yang di-upload sekarang URI file LOKAL, bukan URI Google Photos
+                    Glide.with(EditProfileActivity.this)
+                            .load(selectedImageUri)
+                            .into(imageViewProfile);
+                });
+            } catch (IOException e) {
+                Log.e("EditProfileActivity", "Failed to copy picked image to local file: " + e.getMessage());
+                mainHandler.post(() ->
+                        Snackbar.make(findViewById(android.R.id.content), "Gagal memproses foto, coba pilih foto lain", Snackbar.LENGTH_LONG).show()
+                );
+            }
+        });
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        executorService.shutdown(); // BARU: hentikan background thread saat Activity ditutup, cegah memory leak
     }
 
     private void replaceFragment(Fragment fragment) {

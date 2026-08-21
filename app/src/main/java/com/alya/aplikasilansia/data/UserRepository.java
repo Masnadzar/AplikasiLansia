@@ -6,6 +6,7 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.MutableLiveData;
 
+import com.alya.aplikasilansia.AppApplication;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
@@ -14,8 +15,10 @@ import com.google.firebase.auth.FirebaseAuthRecentLoginRequiredException;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
+// DIHAPUS: import com.google.firebase.storage.FirebaseStorage / StorageReference
+import com.cloudinary.android.MediaManager;
+import com.cloudinary.android.callback.ErrorInfo;
+import com.cloudinary.android.callback.UploadCallback;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -25,12 +28,13 @@ import java.util.Map;
 public class UserRepository {
     private FirebaseAuth mAuth;
     private FirebaseFirestore mFirestore;
-    private StorageReference mStorage; // Firebase Storage reference (tetap, tidak dimigrasi)
+    // DIHAPUS: private StorageReference mStorage;
+    // Cloudinary tidak butuh reference object seperti Storage -- upload langsung lewat MediaManager (static/singleton)
 
     public UserRepository() {
         mAuth = FirebaseAuth.getInstance();
         mFirestore = FirebaseFirestore.getInstance();
-        mStorage = FirebaseStorage.getInstance().getReference("profile_images"); // Storage reference
+        // DIHAPUS: mStorage = FirebaseStorage.getInstance().getReference("profile_images");
     }
 
     public MutableLiveData<User> fetchUser() {
@@ -178,9 +182,17 @@ public class UserRepository {
                             mFirestore.collection("users").document(uid)
                                     .delete()
                                     .addOnSuccessListener(aVoid ->
-                                            mStorage.child(uid + ".jpg").delete()
-                                                    .addOnCompleteListener(storageTask ->
-                                                            deleteFirebaseAuthAccount(firebaseUser, deleteResultLiveData)))
+                                            // DIHAPUS: mStorage.child(uid + ".jpg").delete()
+                                            // Cloudinary menghapus file WAJIB pakai signed request
+                                            // (butuh API Secret) -- API Secret TIDAK BOLEH ditaruh
+                                            // di kode Android (bisa diekstrak siapa saja dari APK).
+                                            // Solusi aman: hapus file Cloudinary lewat backend
+                                            // (Cloud Function) yang menyimpan API Secret dengan aman,
+                                            // dipicu dari sini via HTTP call ke endpoint backend tsb.
+                                            // Sementara: foto lama dibiarkan "yatim" di Cloudinary
+                                            // (tidak terhubung user manapun lagi, tidak masalah secara
+                                            // fungsional, cuma numpuk storage kalau tidak dibersihkan berkala).
+                                            deleteFirebaseAuthAccount(firebaseUser, deleteResultLiveData))
                                     .addOnFailureListener(e ->
                                             deleteResultLiveData.postValue("Failed to delete user data: " + e.getMessage()));
                         })));
@@ -238,22 +250,44 @@ public class UserRepository {
     }
 
     private void uploadProfileImage(Uri imageUri, String userId, MutableLiveData<String> imageUrlLiveData) {
-        StorageReference profileImageRef = mStorage.child(userId + ".jpg");
+        // DIUBAH: putFile() Firebase Storage -> MediaManager.upload() Cloudinary.
+        // "public_id" disamakan dengan userId, supaya upload berikutnya dari user yang sama
+        // OTOMATIS MENIMPA file lama di Cloudinary (folder profile_images/{userId}), sama
+        // seperti perilaku mStorage.child(userId + ".jpg") sebelumnya -- tidak numpuk file lama.
+        MediaManager.get().upload(imageUri)
+                .unsigned(AppApplication.CLOUDINARY_UPLOAD_PRESET) // DIUBAH: hardcode "profile_upload" -> referensi konstanta di AppApplication (satu sumber, tidak duplikat)
+                .option("public_id", userId)
+                .option("folder", "profile_images")
+                .option("overwrite", true)
+                .callback(new UploadCallback() {
+                    @Override
+                    public void onStart(String requestId) {}
 
-        profileImageRef.putFile(imageUri)
-                .addOnSuccessListener(taskSnapshot -> {
-                    profileImageRef.getDownloadUrl().addOnSuccessListener(uri -> {
-                        String imageUrl = uri.toString();
+                    @Override
+                    public void onProgress(String requestId, long bytes, long totalBytes) {}
+
+                    @Override
+                    public void onSuccess(String requestId, Map resultData) {
+                        String imageUrl = (String) resultData.get("secure_url"); // DIUBAH: uri.toString() -> ambil "secure_url" dari respons Cloudinary
 
                         mFirestore.collection("users").document(userId)
                                 .update("profileImageUrl", imageUrl)
                                 .addOnSuccessListener(aVoid -> imageUrlLiveData.postValue(imageUrl))
                                 .addOnFailureListener(e -> Log.e("UserRepository", "Failed to update profile image URL: " + e.getMessage()));
-                    });
+                    }
+
+                    @Override
+                    public void onError(String requestId, ErrorInfo error) {
+                        Log.e("UserRepository", "Failed to upload profile image: " + error.getDescription());
+                        // BARU: teruskan pesan error ke LiveData supaya UI bisa tampilkan ke user,
+                        // sebelumnya cuma masuk Log.e -- user tidak tahu upload gagal & kenapa gagal.
+                        imageUrlLiveData.postValue("Failed to update profile: " + error.getDescription());
+                    }
+
+                    @Override
+                    public void onReschedule(String requestId, ErrorInfo error) {}
                 })
-                .addOnFailureListener(e -> {
-                    Log.e("UserRepository", "Failed to upload profile image: " + e.getMessage());
-                });
+                .dispatch();
     }
 
     public void updateMedHistory(List<inputMedHistory> newMedHistory, MutableLiveData<String> updateResultLiveData) {

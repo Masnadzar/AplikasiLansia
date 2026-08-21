@@ -5,14 +5,34 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.os.Build;
 
+import com.cloudinary.android.MediaManager;
+
+import java.util.HashMap;
+import java.util.Map;
+
 public class AppApplication extends Application {
 
     public static final String CHANNEL_ID = "default";
+
+    // BARU: konfigurasi Cloudinary dipusatkan di sini (single source of truth),
+    // supaya UserRepository & file lain tinggal REFERENSI konstanta ini,
+    // bukan nulis ulang string yang sama di banyak tempat (rawan typo/beda nilai).
+    // GANTI dengan nilai asli dari dashboard Cloudinary (cloudinary.com/console):
+    public static final String CLOUDINARY_CLOUD_NAME = "dq59p6llb";
+    public static final String CLOUDINARY_UPLOAD_PRESET = "profile_upload";
 
     @Override
     public void onCreate() {
         super.onCreate();
         createNotificationChannel();
+        initCloudinary();
+    }
+
+    // DIUBAH: "your_cloud_name" hardcode -> pakai konstanta CLOUDINARY_CLOUD_NAME di atas
+    private void initCloudinary() {
+        Map<String, String> config = new HashMap<>();
+        config.put("cloud_name", CLOUDINARY_CLOUD_NAME);
+        MediaManager.init(this, config);
     }
 
     /**
