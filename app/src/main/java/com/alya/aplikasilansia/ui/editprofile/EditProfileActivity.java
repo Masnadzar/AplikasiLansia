@@ -87,8 +87,17 @@ public class EditProfileActivity extends AppCompatActivity implements OnSaveEdit
             if (user != null) {
                 userNameTextView.setText(user.getUserName());
                 if (user.getProfileImageUrl() != null) {
+                    // DIUBAH: tambah .diskCacheStrategy(NONE) + .skipMemoryCache(true).
+                    // SEBELUMNYA: Glide cache foto berdasarkan URL. Karena URL foto profil
+                    // SELALU SAMA (public_id & folder tetap sama tiap upload -- itu memang
+                    // sengaja, biar Cloudinary tahu ini "file yang sama, ditimpa"), Glide
+                    // mengira "saya sudah punya file ini" dan TIDAK download ulang dari
+                    // jaringan, walau isi file di server sudah beda (foto baru). Hasilnya:
+                    // foto lama yang terus tampil walau upload foto baru sudah berhasil.
                     Glide.with(EditProfileActivity.this)
                             .load(user.getProfileImageUrl())
+                            .diskCacheStrategy(com.bumptech.glide.load.engine.DiskCacheStrategy.NONE)
+                            .skipMemoryCache(true)
                             .into(imageViewProfile);
                 } else {
                     imageViewProfile.setImageResource(R.drawable.img);
@@ -109,7 +118,12 @@ public class EditProfileActivity extends AppCompatActivity implements OnSaveEdit
             }
         });
 
-        editProfileViewModel.fetchUser();
+        // DIHAPUS: editProfileViewModel.fetchUser() yang dipanggil lagi di sini.
+        // Constructor EditProfileViewModel SUDAH otomatis fetchUser() sekali saat dibuat.
+        // Manggil lagi di sini bikin Firestore fetch KEDUA yang REASSIGN userLiveData ke
+        // objek LiveData BARU, padahal observer di atas sudah terlanjur nempel ke objek LAMA --
+        // race condition, salah satu request kadang "menang" duluan/telat, bikin field
+        // kadang kosong kadang terisi (persis gejala yang dilaporkan).
     }
 
     private void dataSavedDialog() {

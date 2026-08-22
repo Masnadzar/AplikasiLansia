@@ -33,6 +33,13 @@ public class AppApplication extends Application {
         Map<String, String> config = new HashMap<>();
         config.put("cloud_name", CLOUDINARY_CLOUD_NAME);
         MediaManager.init(this, config);
+        // BARU: konfirmasi di Logcat bahwa init() benar-benar jalan dengan nilai yang benar.
+        // Kalau baris ini TIDAK MUNCUL sama sekali di Logcat saat app dibuka, berarti
+        // AppApplication.onCreate() tidak terpanggil (masalah registrasi di Manifest).
+        // Kalau MUNCUL tapi upload tetap error "Must supply cloud_name", itu tanda
+        // ada config LAMA yang ke-cache di SharedPreferences HP -- solusinya uninstall
+        // total app dari HP (bukan cuma install ulang APK), baru install lagi dari awal.
+        android.util.Log.d("AppApplication", "Cloudinary initialized with cloud_name=" + CLOUDINARY_CLOUD_NAME);
     }
 
     /**

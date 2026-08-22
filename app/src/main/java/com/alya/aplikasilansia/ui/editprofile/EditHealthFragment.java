@@ -62,7 +62,9 @@ public class EditHealthFragment extends Fragment implements AddMedicalRecordFrag
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        editProfileViewModel = new ViewModelProvider(this).get(EditProfileViewModel.class);
+        // DIUBAH: sama seperti EditPersonalFragment -- pakai ViewModel yang SAMA dengan
+        // Activity (shared ViewModel), bukan bikin instance terpisah sendiri.
+        editProfileViewModel = new ViewModelProvider(requireActivity()).get(EditProfileViewModel.class);
     }
 
     @SuppressLint("MissingInflatedId")
@@ -121,10 +123,11 @@ public class EditHealthFragment extends Fragment implements AddMedicalRecordFrag
 
         if (onSaveEditListener != null) {
             onSaveEditListener.onSaveHealthData(newCaregiver, newStatus, medHistoryList);
-            Intent resultIntent = new Intent();
-            resultIntent.putExtra("FRAGMENT_TYPE", "health");
-            requireActivity().setResult(FragmentActivity.RESULT_OK, resultIntent);
-            requireActivity().finish();
+            // DIHAPUS: requireActivity().finish() yang dipanggil LANGSUNG di sini,
+            // sebelum onSaveHealthData() (updateHealthData2 + updateMedRecord + updateProfile,
+            // semuanya ASYNCHRONOUS) sempat selesai. Sekarang EditProfileActivity yang
+            // menutup layar lewat observer updateResultLiveData, setelah proses selesai --
+            // konsisten dengan perbaikan yang sama di EditPersonalFragment.
         } else {
             Log.e("EditHealthFragment", "onSaveEditListener is not attached");
         }

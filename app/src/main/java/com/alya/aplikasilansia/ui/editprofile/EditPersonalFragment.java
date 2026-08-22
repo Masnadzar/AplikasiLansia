@@ -1,7 +1,6 @@
 package com.alya.aplikasilansia.ui.editprofile;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -12,7 +11,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.alya.aplikasilansia.R;
@@ -55,7 +53,15 @@ public class EditPersonalFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        editProfileViewModel = new ViewModelProvider(this).get(EditProfileViewModel.class);
+        // DIUBAH: new ViewModelProvider(this) -> new ViewModelProvider(requireActivity())
+        // SEBELUMNYA: "this" (scope Fragment) bikin ViewModel BARU & TERPISAH dari
+        // EditProfileActivity, sehingga Fragment fetch data dari Firestore SENDIRI,
+        // tidak berbagi hasil dengan Activity. Setiap buka layar Edit Profil, ada 2-3
+        // request Firestore terpisah jalan bersamaan -- kalau salah satu telat/gagal,
+        // field di fragment ini kelihatan KOSONG walau foto (yang di-load Activity) tetap
+        // muncul. Sekarang "requireActivity()" bikin Fragment PAKAI ULANG ViewModel yang
+        // SAMA PERSIS dengan EditProfileActivity (shared ViewModel, pola resmi Android).
+        editProfileViewModel = new ViewModelProvider(requireActivity()).get(EditProfileViewModel.class);
     }
 
     @Override
@@ -72,8 +78,14 @@ public class EditPersonalFragment extends Fragment {
         setupDatePicker(dateTextView);
 
         view.findViewById(R.id.btn_save_edit).setOnClickListener(v -> {
+            // DIUBAH: requireActivity().onBackPressed() DIHAPUS dari sini.
+            // Sebelumnya dipanggil LANGSUNG setelah saveProfileChanges(), padahal
+            // saveProfileChanges() memicu proses ASYNCHRONOUS (Firestore + Cloudinary).
+            // onBackPressed() akan membatalkan Activity sebelum proses itu selesai,
+            // sama seperti bug requireActivity().finish() yang baru saja diperbaiki.
+            // EditProfileActivity sekarang yang menutup layar (lewat observer
+            // updateResultLiveData) setelah proses BENAR-BENAR selesai.
             saveProfileChanges();
-            requireActivity().onBackPressed();
         });
         view.findViewById(R.id.btn_cancel_edit).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -107,10 +119,14 @@ public class EditPersonalFragment extends Fragment {
 
         if (onSaveEditListener != null) {
             onSaveEditListener.onSavePersonalData(newUsername, newBirthdate);
-            Intent resultIntent = new Intent();
-            resultIntent.putExtra("FRAGMENT_TYPE", "personal");
-            requireActivity().setResult(FragmentActivity.RESULT_OK, resultIntent);
-            requireActivity().finish();
+            // DIHAPUS: requireActivity().finish() yang sebelumnya dipanggil LANGSUNG di sini.
+            // onSavePersonalData() -> updateProfile() itu ASYNCHRONOUS (Firestore update ->
+            // upload Cloudinary -> update URL balik ke Firestore, total bisa 1-3 detik).
+            // Activity di-finish() sebelum proses ini selesai -> upload foto ke Cloudinary
+            // terputus/tidak sempat commit URL ke Firestore -> foto "tidak tersimpan".
+            // Sekarang finish() SATU-SATUNYA dipanggil oleh observer updateResultLiveData
+            // di EditProfileActivity.onCreate(), yang baru jalan SETELAH proses benar-benar
+            // selesai (berhasil ATAU gagal) -- konsisten dengan jalur data kesehatan.
         } else {
             Log.e(TAG, "onSaveEditListener is not attached");
         }

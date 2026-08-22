@@ -227,67 +227,148 @@ public class UserRepository {
 
     public void updateProfile(String newUserName, String email, String birthDate, Uri profileImageUri, MutableLiveData<String> updateResultLiveData) {
         FirebaseUser firebaseUser = mAuth.getCurrentUser();
+        Log.d("UserRepository", "updateProfile() called. currentUser=" + (firebaseUser != null ? firebaseUser.getUid() : "NULL") + ", profileImageUri=" + profileImageUri);
 
-        if (firebaseUser != null) {
-            Map<String, Object> updates = new HashMap<>();
-            if (newUserName != null) updates.put("userName", newUserName);
-            if (email != null) updates.put("email", email);
-            if (birthDate != null) updates.put("birthDate", birthDate);
-
-            mFirestore.collection("users").document(firebaseUser.getUid())
-                    .update(updates)
-                    .addOnSuccessListener(aVoid -> {
-                        if (profileImageUri != null) {
-                            uploadProfileImage(profileImageUri, firebaseUser.getUid(), updateResultLiveData);
-                        } else {
-                            updateResultLiveData.postValue("Profile updated successfully");
-                        }
-                    })
-                    .addOnFailureListener(e -> {
-                        updateResultLiveData.postValue("Failed to update profile: " + e.getMessage());
-                    });
+        if (firebaseUser == null) {
+            // BARU: SEBELUMNYA kalau firebaseUser null, method ini diam total -- tidak ada
+            // postValue apapun -> observer di Activity TIDAK PERNAH menerima apa-apa ->
+            // persis gejala "stuck, tidak ada respon, tidak ada pesan error sama sekali".
+            Log.e("UserRepository", "updateProfile() dibatalkan: user tidak login (currentUser null)");
+            updateResultLiveData.postValue("Failed to update profile: User not authenticated");
+            return;
         }
+
+        Map<String, Object> updates = new HashMap<>();
+        if (newUserName != null) updates.put("userName", newUserName);
+        if (email != null) updates.put("email", email);
+        if (birthDate != null) updates.put("birthDate", birthDate);
+
+        if (updates.isEmpty() && profileImageUri == null) {
+            // BARU: Firestore .update() dengan Map KOSONG akan melempar IllegalArgumentException
+            // secara SYNCHRONOUS (bukan lewat addOnFailureListener) -- exception ini bisa
+            // langsung terlempar ke pemanggil tanpa sempat di-postValue ke LiveData, yang
+            // juga bisa terlihat seperti "diam total" kalau tidak ada try-catch di sekitarnya.
+            Log.w("UserRepository", "updateProfile() dipanggil tanpa perubahan apapun (updates kosong & tidak ada foto)");
+            updateResultLiveData.postValue("Profile updated successfully");
+            return;
+        }
+
+        if (updates.isEmpty()) {
+            // Ada foto tapi field lain semua null -> tetap harus panggil .update() dengan
+            // minimal 1 field asli, BUKAN Map kosong. Trik aman: skip .update() field teks,
+            // langsung lanjut ke upload foto.
+            Log.d("UserRepository", "Tidak ada perubahan field teks, langsung upload foto");
+            uploadProfileImage(profileImageUri, firebaseUser.getUid(), updateResultLiveData);
+            return;
+        }
+
+        Log.d("UserRepository", "Memulai Firestore .update() dengan field: " + updates.keySet());
+        mFirestore.collection("users").document(firebaseUser.getUid())
+                .update(updates)
+                .addOnSuccessListener(aVoid -> {
+                    Log.d("UserRepository", "Firestore .update() SUKSES");
+                    if (profileImageUri != null) {
+                        uploadProfileImage(profileImageUri, firebaseUser.getUid(), updateResultLiveData);
+                    } else {
+                        updateResultLiveData.postValue("Profile updated successfully");
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    Log.e("UserRepository", "Firestore .update() GAGAL: " + e.getMessage(), e);
+                    updateResultLiveData.postValue("Failed to update profile: " + e.getMessage());
+                });
     }
 
     private void uploadProfileImage(Uri imageUri, String userId, MutableLiveData<String> imageUrlLiveData) {
+        Log.d("UserRepository", "uploadProfileImage() dipanggil. uri=" + imageUri + ", userId=" + userId);
+
         // DIUBAH: putFile() Firebase Storage -> MediaManager.upload() Cloudinary.
         // "public_id" disamakan dengan userId, supaya upload berikutnya dari user yang sama
         // OTOMATIS MENIMPA file lama di Cloudinary (folder profile_images/{userId}), sama
         // seperti perilaku mStorage.child(userId + ".jpg") sebelumnya -- tidak numpuk file lama.
-        MediaManager.get().upload(imageUri)
-                .unsigned(AppApplication.CLOUDINARY_UPLOAD_PRESET) // DIUBAH: hardcode "profile_upload" -> referensi konstanta di AppApplication (satu sumber, tidak duplikat)
-                .option("public_id", userId)
-                .option("folder", "profile_images")
-                .option("overwrite", true)
-                .callback(new UploadCallback() {
-                    @Override
-                    public void onStart(String requestId) {}
+        String requestIdResult;
+        try {
+            // DIUBAH: public_id sekarang UNIK per upload (userId + timestamp), bukan cuma userId.
+            // Cloudinary MELARANG overwrite=true untuk unsigned preset SECARA MUTLAK, baik
+            // lewat parameter kode MAUPUN lewat toggle di Dashboard preset -- ini pembatasan
+            // keamanan permanen dari Cloudinary, tidak bisa diakali dengan cara apapun selama
+            // masih pakai unsigned upload. Solusinya: setiap upload bikin FILE BARU dengan nama
+            // berbeda (bukan menimpa file lama). Efek sampingnya URL foto SELALU BEDA tiap
+            // upload -> otomatis menyelesaikan juga masalah cache Glide (URL beda = Glide pasti
+            // fetch ulang dari jaringan, tidak mungkin kepakai cache foto lama).
+            String uniquePublicId = userId + "_" + System.currentTimeMillis();
+            requestIdResult = MediaManager.get().upload(imageUri)
+                    .unsigned(AppApplication.CLOUDINARY_UPLOAD_PRESET) // DIUBAH: hardcode "profile_upload" -> referensi konstanta di AppApplication (satu sumber, tidak duplikat)
+                    .option("public_id", uniquePublicId)
+                    .option("folder", "profile_images")
+                    .callback(new UploadCallback() {
+                        @Override
+                        public void onStart(String requestId) {
+                            // BARU: log ini WAJIB muncul kalau job benar-benar mulai diproses
+                            // WorkManager. Kalau log ini TIDAK PERNAH muncul di Logcat,
+                            // artinya macetnya di WorkManager/scheduling, bukan di jaringan.
+                            Log.d("UserRepository", "Cloudinary onStart: requestId=" + requestId);
+                        }
 
-                    @Override
-                    public void onProgress(String requestId, long bytes, long totalBytes) {}
+                        @Override
+                        public void onProgress(String requestId, long bytes, long totalBytes) {
+                            Log.d("UserRepository", "Cloudinary onProgress: " + bytes + "/" + totalBytes);
+                        }
 
-                    @Override
-                    public void onSuccess(String requestId, Map resultData) {
-                        String imageUrl = (String) resultData.get("secure_url"); // DIUBAH: uri.toString() -> ambil "secure_url" dari respons Cloudinary
+                        @Override
+                        public void onSuccess(String requestId, Map resultData) {
+                            Log.d("UserRepository", "Cloudinary onSuccess: " + resultData);
+                            String imageUrl = (String) resultData.get("secure_url"); // DIUBAH: uri.toString() -> ambil "secure_url" dari respons Cloudinary
 
-                        mFirestore.collection("users").document(userId)
-                                .update("profileImageUrl", imageUrl)
-                                .addOnSuccessListener(aVoid -> imageUrlLiveData.postValue(imageUrl))
-                                .addOnFailureListener(e -> Log.e("UserRepository", "Failed to update profile image URL: " + e.getMessage()));
-                    }
+                            mFirestore.collection("users").document(userId)
+                                    .update("profileImageUrl", imageUrl)
+                                    // DIUBAH: SEBELUMNYA post URL Cloudinary asli ke imageUrlLiveData,
+                                    // padahal LiveData yang sama ini dibaca EditProfileActivity sebagai
+                                    // PESAN STATUS ("Profile updated successfully"), bukan sebagai URL.
+                                    // Akibatnya kondisi `"Profile updated successfully".equals(updateResult)`
+                                    // SELALU FALSE setiap kali user ganti foto -> observer tidak pernah
+                                    // menganggap ini "sukses" -> finish() tidak pernah terpanggil ->
+                                    // layar "stuck" di situ terus walau upload sebenarnya BERHASIL.
+                                    .addOnSuccessListener(aVoid -> {
+                                        Log.d("UserRepository", "Firestore field profileImageUrl berhasil diupdate: " + imageUrl);
+                                        imageUrlLiveData.postValue("Profile updated successfully");
+                                    })
+                                    .addOnFailureListener(e -> {
+                                        Log.e("UserRepository", "Failed to update profile image URL: " + e.getMessage(), e);
+                                        imageUrlLiveData.postValue("Failed to update profile: " + e.getMessage());
+                                    });
+                        }
 
-                    @Override
-                    public void onError(String requestId, ErrorInfo error) {
-                        Log.e("UserRepository", "Failed to upload profile image: " + error.getDescription());
-                        // BARU: teruskan pesan error ke LiveData supaya UI bisa tampilkan ke user,
-                        // sebelumnya cuma masuk Log.e -- user tidak tahu upload gagal & kenapa gagal.
-                        imageUrlLiveData.postValue("Failed to update profile: " + error.getDescription());
-                    }
+                        @Override
+                        public void onError(String requestId, ErrorInfo error) {
+                            // BARU: log lengkap termasuk kode error dari Cloudinary,
+                            // supaya kelihatan apakah ini soal preset salah, cloud_name salah,
+                            // atau soal jaringan.
+                            Log.e("UserRepository", "Cloudinary onError: code=" + error.getCode() + ", desc=" + error.getDescription());
+                            imageUrlLiveData.postValue("Failed to update profile: " + error.getDescription());
+                        }
 
-                    @Override
-                    public void onReschedule(String requestId, ErrorInfo error) {}
-                })
-                .dispatch();
+                        @Override
+                        public void onReschedule(String requestId, ErrorInfo error) {
+                            // BARU: ini kondisi PALING MUNGKIN jadi penyebab "diam total tanpa error".
+                            // onReschedule dipanggil kalau WorkManager MENUNDA job (biasanya karena
+                            // tidak ada koneksi internet saat itu) -- job TIDAK gagal, TIDAK sukses,
+                            // cuma "nunggu" tanpa batas waktu sampai syarat terpenuhi (misal internet
+                            // nyala lagi). Dari sisi observer, ini terlihat PERSIS seperti "stuck diam".
+                            Log.w("UserRepository", "Cloudinary onReschedule (job ditunda, biasanya karena TIDAK ADA KONEKSI INTERNET saat upload): " + error.getDescription());
+                            imageUrlLiveData.postValue("Failed to update profile: Tidak ada koneksi internet, coba lagi");
+                        }
+                    })
+                    .dispatch();
+            Log.d("UserRepository", "MediaManager.dispatch() dipanggil, requestId=" + requestIdResult);
+        } catch (Exception e) {
+            // BARU: kalau MediaManager belum ter-init dengan benar (misal AppApplication
+            // gagal dipanggil / cloud_name kosong), .upload() bisa melempar exception
+            // SYNCHRONOUS di sini -- tanpa try-catch ini, exception itu bisa membuat
+            // seluruh chain berhenti tanpa pernah sampai ke callback apapun ("diam total").
+            Log.e("UserRepository", "Exception saat memanggil MediaManager.upload(): " + e.getMessage(), e);
+            imageUrlLiveData.postValue("Failed to update profile: " + e.getMessage());
+        }
     }
 
     public void updateMedHistory(List<inputMedHistory> newMedHistory, MutableLiveData<String> updateResultLiveData) {
